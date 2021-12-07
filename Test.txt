@@ -1,0 +1,9 @@
+'h'
+"hi"
+-12.45E-52
+identifier_4785
+int
+TRUE
+=
++
+abs
