@@ -2,12 +2,31 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+
 
 int yyerror(char *errormsg);
 int yylex();
 
-%}
+void insert_type();
+void addSymbol(char* type,char* variable_type, char* name);
+int searchSymbol(char *name);
+struct symData {
+        char * id_name;
+        char * returnType;
+        char * type;
+        int lineNumber;
+} sym[64];
 
+int count=0;
+int query;
+extern int countn;
+
+%}
+%union {
+    char *str;
+}
 %token CHARACTER 
 %token STRING 
 %token NUMBER 
@@ -39,7 +58,7 @@ int yylex();
 %left ','
 
 %token MATHEMATICAL_FUNCTION 
-%token IDENTIFIER 
+%token <str> IDENTIFIER 
 
 %token FUNCTION 
 %token IF 
@@ -53,8 +72,7 @@ int yylex();
 %token READ 
 %token WRITE 
 
-
-
+%type <str> declaration_statement variable_type expression function_declaration
 
 %%
 
@@ -84,42 +102,42 @@ statement:
 
 		
 declaration_statement:
-		variable_type IDENTIFIER '=' expression 	{printf("Declaration + assignement parsed\n");}
-		| variable_type IDENTIFIER 					{printf("Declaration parsed\n");}
+		variable_type IDENTIFIER '=' expression 				{$$ = yylval.str; addSymbol("Variable",$1,$2);}
+		| variable_type IDENTIFIER 								{$$ = yylval.str; addSymbol("Variable",$1,$2);}
 		;
 		
 variable_type:
-		INT_TYPE
-		| REAL_TYPE
-		| BOOLEAN_TYPE
-		| CHAR_TYPE
-		| STRING_TYPE
+		INT_TYPE 		{$$ = yylval.str;}
+		| REAL_TYPE		{$$ = yylval.str;}
+		| BOOLEAN_TYPE	{$$ = yylval.str;}
+		| CHAR_TYPE		{$$ = yylval.str;}
+		| STRING_TYPE	{$$ = yylval.str;}
 		;
 assignement_statement:
-		IDENTIFIER '=' expression 					{printf("Assignement parsed\n");}
+		IDENTIFIER '=' expression 					
 		;
 		
 
 		
 if_statement:
-		IF condition THEN '\n' statement_list '\n' ELSE '\n' statement_list '\n' END 		{printf("if else statement parsed\n");}
-		| IF condition THEN '\n' statement_list '\n'  END									{printf("if statement parsed\n");}
+		IF condition THEN '\n' statement_list '\n' ELSE '\n' statement_list '\n' END 		
+		| IF condition THEN '\n' statement_list '\n'  END									
 		;
 		
 while_statement:
-		WHILE condition DO '\n' statement_list '\n' END 									{printf("while statement parsed\n");}
+		WHILE condition DO '\n' statement_list '\n' END 									
 		;
 		
 do_while_statement:
-		DO '\n' statement_list '\n' WHILE condition											{printf("do while statement parsed\n");}
+		DO '\n' statement_list '\n' WHILE condition											
 		;
 
 read_statement:
-		READ '(' STRING ',' IDENTIFIER ')' {printf("read statement parsed\n");}
+		READ '(' STRING ',' IDENTIFIER ')' 
 		;
 		
 write_statement:
-		WRITE '(' expression ')' {printf("Write statement parsed\n");}
+		WRITE '(' expression ')' 
 		;
 		
 return_statement:
@@ -128,13 +146,13 @@ return_statement:
 		
 		
 expression :
-		expression ADDITION_OPERATOR expression
-		| expression SUBSTRACTION_OPERATOR expression
-		| expression MULTIPLICATION_OPERATOR expression
-		| expression DIVISION_OPERATOR expression
-		| '(' expression ')'
-		| function_call
-		| value
+		expression ADDITION_OPERATOR expression 			{$$ = yylval.str;}
+		| expression SUBSTRACTION_OPERATOR expression 		{$$ = yylval.str;}
+		| expression MULTIPLICATION_OPERATOR expression 	{$$ = yylval.str;}
+		| expression DIVISION_OPERATOR expression 			{$$ = yylval.str;}
+		| '(' expression ')' 								{$$ = yylval.str;}
+		| function_call 									{$$ = yylval.str;}
+		| value 											{$$ = yylval.str;}
 		
 
 		
@@ -165,7 +183,8 @@ condition:
 
 		
 function_declaration: 
-		FUNCTION IDENTIFIER '('argument_declaration_list ')' ':' variable_type '\n' START '\n' statement_list '\n' END  {printf("Function declaration statement parsed\n");}
+		FUNCTION IDENTIFIER '('argument_declaration_list ')' ':' variable_type '\n' {$<str>$ = yylval.str;addSymbol("Function",$7,$2);}
+		START '\n' statement_list '\n' END  
 		;
 argument_declaration_list:
 
@@ -179,7 +198,7 @@ argument_declaration:
 		;
 
 function_call:
-		IDENTIFIER '('argument_list ')'  {printf("Function call parsed\n");}
+		IDENTIFIER '('argument_list ')'  
 		;
 	
 argument_list:
@@ -196,16 +215,61 @@ argument:
 /*** C Code section ***/
 
 int main(int argc, char const *argv[]) {
-  yyparse();
-  
-  printf("Program Valid");
-  return 0;
+	yyparse();
+	printf("\n\n");
+	int i=0;
+	printf("---------- SYMBOL TABLE ----------\n");
+	for(i=0; i<count; i++) {
+		printf("%s : %s (%s) defined in line %d\n",sym[i].type ,sym[i].id_name , sym[i].returnType, sym[i].lineNumber);
+	}
+	for(i=0;i<count;i++) {
+		free(sym[i].id_name);
+		free(sym[i].type);
+		free(sym[i].returnType);
+	}
+	printf("\n\n");
+	printf("Program Valid");
+	return 0;
 }
+
+
+
 
 int yyerror(char *errormsg)
 {
     fprintf(stderr, "%s\n", errormsg);
     exit(1);
 }
+
+
+
+void addSymbol(char* type,char* variable_type, char* name) {
+	query=searchSymbol(name);
+	if(query==0) {
+		sym[count].id_name=strdup(name);
+		sym[count].returnType=strdup(variable_type);
+		sym[count].lineNumber=countn;
+		sym[count].type=strdup(type);   
+		count++; 
+	}
+	else
+	{
+		char* str = "syntax error : Identifier already defined";
+		yyerror(str);
+	}
+}
+
+int searchSymbol(char *name) { 
+    int i; 
+    for(i=count-1; i>=0; i--) {
+        if(strcmp(sym[i].id_name, name)==0) {   
+            return -1;
+            break;  
+        }
+    } 
+    return 0;
+}
+
+
 
 		

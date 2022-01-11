@@ -2,11 +2,18 @@
 
 %{
 #include "y.tab.h"
-#include <stdio.h>
+#include <string.h>
+
 int yyerror(char *errormsg);
+
+int countn =0;
+
 %}
 
+
 %option noyywrap
+
+
 
 space [ \t]
 spaces {space}+
@@ -71,12 +78,12 @@ write	write
 
 {number}	{return(NUMBER);}		
 
-{int-type}		{return(INT_TYPE);}		
-{real-type}		{return(REAL_TYPE);}
-{boolean-type}		{return(BOOLEAN_TYPE);}
-{char-type}		{return(CHAR_TYPE);}
-{string-type}		{return(STRING_TYPE);}
-{void-type}		{return(VOID_TYPE);}
+{int-type}		{yylval.str = strdup(yytext);return(INT_TYPE);}		
+{real-type}		{yylval.str = strdup(yytext);return(REAL_TYPE);}
+{boolean-type}		{yylval.str = strdup(yytext);return(BOOLEAN_TYPE);}
+{char-type}		{yylval.str = strdup(yytext);return(CHAR_TYPE);}
+{string-type}		{yylval.str = strdup(yytext);return(STRING_TYPE);}
+{void-type}		{yylval.str = strdup(yytext);return(VOID_TYPE);}
 
 {true}		{return(TRUE);}
 {false}		{return(FALSE);}
@@ -112,14 +119,15 @@ write	write
 {read}	{return(READ);}		
 {write}	{return(WRITE);}			
 
-{identifier}	{return(IDENTIFIER);}
+{identifier}	{yylval.str = strdup(yytext);return(IDENTIFIER);}
 
 
 \/\/.*	{ ; }
 \/\*(.*\n)*.*\*\/	{ ; } 
 [ \t]*	{ ; }
-.|\n    {   return *yytext;   }
 
+[\n]    {   countn++; return *yytext;   }
+.		{   return *yytext;   }
 %%
 /*** C Code section ***/
 
