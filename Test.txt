@@ -1,12 +1,19 @@
-int c
-string coucou = coucou
-string test = "blabla"
-char yay = 'c'
+
+function TestFunction(int arg1, string arg2 = "test") : int
+begin
+	arg1 = arg1 + 25
+	arg2 = "Hello " + "World"
+	read("Enter a word", arg2)
+	return arg1*2
+end
 
 
+int var1 = 5
+string var2
+int var3 = TestFunction(var1, var2)
 
-int blu 	=	 25
-
-blu = TRUE
-
-if
+while var1 >= var3 do
+	if var1 == 25 then
+		write("The result is : "+var3)
+	end
+end
