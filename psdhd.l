@@ -1,10 +1,11 @@
 /*** Definition section ***/
 
 %{
+#include "y.tab.h"
 #include <stdio.h>
+int yyerror(char *errormsg);
 %}
 
-/* This tells flex to read only one input file */
 %option noyywrap
 
 space [ \t]
@@ -20,43 +21,46 @@ number [-]?{digits}("."{digits})?("E"[+-]?{digits})?
 identifier {letter}({letter}|{digit}|"_")*
 variable-type int|real|boolean|char|string
 boolean TRUE|FALSE
-comparator-operator =|<|>|<=|>=|AND|OR|NOT
+comparator-operator ==|<|>|<=|>=|AND|OR|NOT
 arithmetic-operator  "+"|"-"|"*"|"/"|"%"
 mathematical-function abs|exp|log|min|max|pow|sqrt
 
 
-
 %%
     /*** Rules section ***/
-
 	
+	
+{character}	{return(CHARACTER);}	
+{string}	{return(STRING);}	
 
-{character}	{printf("\nSaw a character : %s\n",yytext);}	
-{string}	{printf("\nSaw a string : %s\n",yytext);}	
+{number}	{return(NUMBER);}		
 
-{number}	{printf("\nSaw a number : %s\n",yytext);}	
+{variable-type}		{return(VARIABLE_TYPE);}		
+{boolean}		{return(BOOLEAN);}	
+{comparator-operator}	{return(COMPARATOR_OPERATOR);}	
+{arithmetic-operator}	{return(ARITHMETIC_OPERATOR);}	
+{mathematical-function}		{return(MATHEMATICAL_FUNCTION);}	
 
-{variable-type}		{printf("\nSaw a variable-type : %s\n",yytext);}	
-{boolean}		{printf("\nSaw a boolean : %s\n",yytext);}	
-{comparator-operator}	{printf("\nSaw a comparator-operator : %s\n",yytext);}	
-{arithmetic-operator}	{printf("\nSaw a arithmetic-operator : %s\n",yytext);}	
-{mathematical-function}		{printf("\nSaw a mathematical-function : %s\n",yytext);}
+{identifier}	{return(IDENTIFIER);}		
 
-{identifier}	{printf("\nSaw a identifier : %s\n",yytext);}		
-
-.|\n    {   /* Ignore all other characters. */   }
+\/\/.*	{ ; }
+\/\*(.*\n)*.*\*\/	{ ; } 
+[ \t]*	{ ; }
+.|\n    {   return *yytext;   }
 
 %%
 /*** C Code section ***/
 
-int main(int argc, char* argv[])
+int main(int argc, char const *argv[]) {
+  yyin = fopen(argv[1], "r");
+  int result_code = yyparse();
+  fclose(yyin);
+  printf("\nProgram valid\n");
+  return result_code;
+}
+
+int yyerror(char *errormsg)
 {
-    if(argc > 1)
-	{
-		FILE *fp = fopen(argv[1], "r");
-		if(fp)
-			yyin = fp;
-	}
-	yylex();
-	return 1;
+    fprintf(stderr, "%s\n", errormsg);
+    exit(1);
 }

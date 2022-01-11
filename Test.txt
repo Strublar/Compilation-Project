@@ -1,9 +1,12 @@
-'h'
-"hi"
--12.45E-52
-identifier_4785
-int
-TRUE
-=
-+
-abs
+int c
+string coucou = coucou
+string test = "blabla"
+char yay = 'c'
+
+
+
+int blu 	=	 25
+
+blu = TRUE
+
+if
