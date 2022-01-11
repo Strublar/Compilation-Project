@@ -3,7 +3,6 @@
 %{
 #include "y.tab.h"
 #include <stdio.h>
-int yyerror(char *errormsg);
 %}
 
 %option noyywrap
@@ -51,16 +50,3 @@ mathematical-function abs|exp|log|min|max|pow|sqrt
 %%
 /*** C Code section ***/
 
-int main(int argc, char const *argv[]) {
-  yyin = fopen(argv[1], "r");
-  int result_code = yyparse();
-  fclose(yyin);
-  printf("\nProgram valid\n");
-  return result_code;
-}
-
-int yyerror(char *errormsg)
-{
-    fprintf(stderr, "%s\n", errormsg);
-    exit(1);
-}

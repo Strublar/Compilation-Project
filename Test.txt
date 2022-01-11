@@ -4,9 +4,7 @@ string test = "blabla"
 char yay = 'c'
 
 
-
 int blu 	=	 25
 
-blu = TRUE
 
-if
+blu = TRUE
