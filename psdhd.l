@@ -78,48 +78,48 @@ write	write
 
 {number}	{return(NUMBER);}		
 
-{int-type}		{yylval.str = strdup(yytext);return(INT_TYPE);}		
-{real-type}		{yylval.str = strdup(yytext);return(REAL_TYPE);}
-{boolean-type}		{yylval.str = strdup(yytext);return(BOOLEAN_TYPE);}
-{char-type}		{yylval.str = strdup(yytext);return(CHAR_TYPE);}
-{string-type}		{yylval.str = strdup(yytext);return(STRING_TYPE);}
-{void-type}		{yylval.str = strdup(yytext);return(VOID_TYPE);}
+{int-type}		{strcpy(yylval.node_object.name,(yytext)); yylval.str = strdup(yytext);return(INT_TYPE);}		
+{real-type}		{strcpy(yylval.node_object.name,(yytext)); yylval.str = strdup(yytext);return(REAL_TYPE);}
+{boolean-type}	{strcpy(yylval.node_object.name,(yytext)); yylval.str = strdup(yytext);return(BOOLEAN_TYPE);}
+{char-type}		{strcpy(yylval.node_object.name,(yytext)); yylval.str = strdup(yytext);return(CHAR_TYPE);}
+{string-type}	{strcpy(yylval.node_object.name,(yytext)); yylval.str = strdup(yytext);return(STRING_TYPE);}
+{void-type}		{strcpy(yylval.node_object.name,(yytext)); yylval.str = strdup(yytext);return(VOID_TYPE);}
 
-{true}		{return(TRUE);}
-{false}		{return(FALSE);}
-
-
-{addition-operator}			{return(ADDITION_OPERATOR);}	
-{substraction-operator}		{return(SUBSTRACTION_OPERATOR);}	
-{multiplication-operator}	{return(MULTIPLICATION_OPERATOR);}	
-{division-operator}			{return(DIVISION_OPERATOR);}	
-
-{equal-operator}			{return(EQ_OPERATOR);}	
-{different-operator}		{return(DIFF_OPERATOR);}	
-{inferior-operator}			{return(INF_OPERATOR);}	
-{inferior-equal-operator}	{return(INFEQ_OPERATOR);}	
-{superior-operator}			{return(SUP_OPERATOR);}	
-{superior-equal-operator}	{return(SUPEQ_OPERATOR);}	
-{and-operator}				{return(AND_OPERATOR);}	
-{or-operator}				{return(OR_OPERATOR);}	
-{not-operator}				{return(NOT_OPERATOR);}	
-
-{mathematical-function}		{return(MATHEMATICAL_FUNCTION);}	
+{true}		{strcpy(yylval.node_object.name,(yytext)); return(TRUE);}
+{false}		{strcpy(yylval.node_object.name,(yytext)); return(FALSE);}
 
 
-{function}	{return(FUNCTION);}		
-{start} {return(START);}		
-{end}	{return(END);}	
-{return}	{return(RETURN);}		
-{if}	{return(IF);}		
-{then}	{return(THEN);}		
-{else}	{return(ELSE);}		
-{while}	{return(WHILE);}		
-{do}	{return(DO);}		
-{read}	{return(READ);}		
-{write}	{return(WRITE);}			
+{addition-operator}			{strcpy(yylval.node_object.name,(yytext)); return(ADDITION_OPERATOR);}	
+{substraction-operator}		{strcpy(yylval.node_object.name,(yytext)); return(SUBSTRACTION_OPERATOR);}	
+{multiplication-operator}	{strcpy(yylval.node_object.name,(yytext)); return(MULTIPLICATION_OPERATOR);}	
+{division-operator}			{strcpy(yylval.node_object.name,(yytext)); return(DIVISION_OPERATOR);}	
 
-{identifier}	{yylval.str = strdup(yytext);return(IDENTIFIER);}
+{equal-operator}			{strcpy(yylval.node_object.name,(yytext)); return(EQ_OPERATOR);}	
+{different-operator}		{strcpy(yylval.node_object.name,(yytext)); return(DIFF_OPERATOR);}	
+{inferior-operator}			{strcpy(yylval.node_object.name,(yytext)); return(INF_OPERATOR);}	
+{inferior-equal-operator}	{strcpy(yylval.node_object.name,(yytext)); return(INFEQ_OPERATOR);}	
+{superior-operator}			{strcpy(yylval.node_object.name,(yytext)); return(SUP_OPERATOR);}	
+{superior-equal-operator}	{strcpy(yylval.node_object.name,(yytext)); return(SUPEQ_OPERATOR);}	
+{and-operator}				{strcpy(yylval.node_object.name,(yytext)); return(AND_OPERATOR);}	
+{or-operator}				{strcpy(yylval.node_object.name,(yytext)); return(OR_OPERATOR);}	
+{not-operator}				{strcpy(yylval.node_object.name,(yytext)); return(NOT_OPERATOR);}	
+
+{mathematical-function}		{strcpy(yylval.node_object.name,(yytext)); return(MATHEMATICAL_FUNCTION);}	
+
+
+{function}	{strcpy(yylval.node_object.name,(yytext)); return(FUNCTION);}		
+{start} 	{strcpy(yylval.node_object.name,(yytext)); return(START);}		
+{end}		{strcpy(yylval.node_object.name,(yytext)); return(END);}	
+{return}	{strcpy(yylval.node_object.name,(yytext)); return(RETURN);}		
+{if}		{strcpy(yylval.node_object.name,(yytext)); return(IF);}		
+{then}		{strcpy(yylval.node_object.name,(yytext)); return(THEN);}		
+{else}		{strcpy(yylval.node_object.name,(yytext)); return(ELSE);}		
+{while}		{strcpy(yylval.node_object.name,(yytext)); return(WHILE);}		
+{do}		{strcpy(yylval.node_object.name,(yytext)); return(DO);}		
+{read}		{strcpy(yylval.node_object.name,(yytext)); return(READ);}		
+{write}		{strcpy(yylval.node_object.name,(yytext)); return(WRITE);}			
+
+{identifier}	{strcpy(yylval.node_object.name,(yytext)); yylval.str = strdup(yytext);return(IDENTIFIER);}
 
 
 \/\/.*	{ ; }

@@ -125,14 +125,18 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 27 "psdhd.y"
+#line 38 "psdhd.y"
 
     char *str;
+	struct var_name {
+	   char name[100];
+	   struct node* node;
+	} node_object;
 
 
 
 /* Line 1676 of yacc.c  */
-#line 136 "y.tab.h"
+#line 140 "y.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
