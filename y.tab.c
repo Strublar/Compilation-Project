@@ -77,11 +77,11 @@
 
 
 
-int yyerror(char *errormsg);
+void yyerror(char *errormsg);
 int yylex();
 
 void insert_type();
-void addSymbol(char* type, char variable_type, char name);
+void addSymbol(char* type, char* variable_type, char* name);
 int searchSymbol(char *name);
 int count=0;
 int query;
@@ -2328,6 +2328,9 @@ int main(int argc, char const *argv[]) {
 	yyparse();
 	printf("\n\n");
 	int i=0;
+	printf("salut2");
+
+	
 	printf("---------- SYMBOL TABLE ----------\n");
 	for(i=0; i<count; i++) {
 		printf("%s : %s (%s) defined in line %d\n",sym[i].type ,sym[i].id_name , sym[i].returnType, sym[i].lineNumber);
@@ -2346,18 +2349,14 @@ int main(int argc, char const *argv[]) {
 	return 0;
 }
 
-
-
-
-int yyerror(char *errormsg)
+void yyerror(char *errormsg)
 {
+	printf("salut3");
     fprintf(stderr, "%s\n", errormsg);
     exit(1);
 }
 
-
-
-void addSymbol(char* type, char variable_type, char name) {
+void addSymbol(char* type, char* variable_type, char* name) {
 	query=searchSymbol(name);
 	if(query==0) {
 		sym[count].id_name=strdup(name);
@@ -2404,7 +2403,3 @@ void printTree(struct node *tree) {
         printTree(tree->right); 
     }
 }
-
-
-		
-
