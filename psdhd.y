@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-
+#define COUNTPRINTTREE 10
 
 void yyerror(char *errormsg);
 int yylex();
@@ -32,7 +32,7 @@ struct node {
 
 struct node *root;
 struct node* createNode(struct node *left, struct node *right, char *token);
-void printTree(struct node *tree);
+void printTree(struct node *tree, int space);
 
 %}
 %union {
@@ -73,7 +73,7 @@ void printTree(struct node *tree);
 %left <node_object> ','
 
 %token <node_object> MATHEMATICAL_FUNCTION 
-%token <node_object>  IDENTIFIER 
+%token <node_object> IDENTIFIER 			
 
 %token <node_object> FUNCTION 
 %token <node_object> IF 
@@ -90,6 +90,7 @@ void printTree(struct node *tree);
 %type <node_object> program statement_list statement declaration_statement variable_type assignement_statement if_statement while_statement
 %type <node_object> do_while_statement read_statement write_statement return_statement expression value condition function_declaration
 %type <node_object> argument_declaration_list argument_declaration function_call argument_list argument
+%type <node_object> identifier
 
 %%
 
@@ -121,15 +122,18 @@ statement:
 		| return_statement			{ $$.node = $1.node; }
 		;
 
+identifier:
+		IDENTIFIER		{ $$.node = createNode(NULL, NULL, $$.name); }
+	;
 		
 declaration_statement:
-		variable_type IDENTIFIER '=' expression 	{ 
-														addSymbol("Variable", $1.name, $2.name);
+		variable_type identifier '=' expression 	{ 
+														addSymbol("Variable", $1.node->token, $2.name);
 														struct node *type_id = createNode($1.node, $2.node, "decl_without_assign");
-														$$.node = createNode(type_id, $2.node, "decl_with_assign");
+														$$.node = createNode(type_id, $4.node, "decl_with_assign");
 													}
-		| variable_type IDENTIFIER 					{
-														addSymbol("Variable",$1.name,$2.name);
+		| variable_type identifier 					{
+														addSymbol("Variable", $1.node->token, $2.name);
 														$$.node = createNode($1.node, $2.node, "decl_without_assign");
 													}
 		;
@@ -143,7 +147,7 @@ variable_type:
 		;
 		
 assignement_statement:
-		IDENTIFIER '=' expression 	{ $$.node = createNode($1.node, $3.node, "assignement_statement"); }			
+		identifier '=' expression 	{ $$.node = createNode($1.node, $3.node, "assignement_statement"); }			
 		;
 		
 		
@@ -190,7 +194,7 @@ do_while_statement:
 		;
 
 read_statement:
-		READ '(' STRING ',' IDENTIFIER ')'
+		READ '(' STRING ',' identifier ')'
 			{ 
 				struct node *str_id = createNode($3.node, $5.node, "str_id");
 				struct node *read_str_id = createNode($1.node, str_id, "read_statement");
@@ -240,7 +244,7 @@ value:
 		| CHARACTER			{ $$.node = createNode(NULL, NULL, $1.name); }
 		| TRUE				{ $$.node = createNode(NULL, NULL, $1.name); }
 		| FALSE				{ $$.node = createNode(NULL, NULL, $1.name); }
-		| IDENTIFIER		{ $$.node = createNode(NULL, NULL, $1.name); }
+		| identifier		{ $$.node = createNode(NULL, NULL, $1.name); }
 		;
 	
 
@@ -287,7 +291,7 @@ condition:
 
 
 function_declaration: 
-		FUNCTION IDENTIFIER '(' argument_declaration_list ')' ':' variable_type '\n' {$<str>$ = yylval.str;addSymbol("Function",$7.name,$2.name);}
+		FUNCTION identifier '(' argument_declaration_list ')' ':' variable_type '\n' {$<str>$ = $1.name;addSymbol("Function",$7.node->token,$2.name);}
 		START '\n' statement_list '\n' END  
 				{ 
 					struct node *start_stat = createNode($10.node, $12.node, "start_stat");
@@ -303,16 +307,16 @@ argument_declaration_list:
 		;
 		
 argument_declaration:
-		variable_type IDENTIFIER '=' value					{ 
+		variable_type identifier '=' value					{ 
 																struct node *type_id = createNode($1.node, $2.node, "type_id");
 																$$.node = createNode(type_id, $4.node, "arg_type_id_value");
 															}			
-		| variable_type IDENTIFIER							{ $$.node = createNode($1.node, $2.node, "arg_type_id"); }
+		| variable_type identifier							{ $$.node = createNode($1.node, $2.node, "arg_type_id"); }
 		| argument_declaration ',' argument_declaration		{ $$.node = createNode($1.node, $3.node, "argdecl_argdecl"); }
 		;
 		
 function_call:
-		IDENTIFIER '(' argument_list ')'  	{ $$.node = createNode($1.node, $3.node, "function_call"); }
+		identifier '(' argument_list ')'  	{ $$.node = createNode($1.node, $3.node, "function_call"); }
 		;
 	
 argument_list:
@@ -329,11 +333,9 @@ argument:
 
 int main(int argc, char const *argv[]) {
 	yyparse();
-	printf("\n\n");
 	int i=0;
-	printf("salut2");
 
-	
+	printf("\n");
 	printf("---------- SYMBOL TABLE ----------\n");
 	for(i=0; i<count; i++) {
 		printf("%s : %s (%s) defined in line %d\n",sym[i].type ,sym[i].id_name , sym[i].returnType, sym[i].lineNumber);
@@ -344,8 +346,9 @@ int main(int argc, char const *argv[]) {
 		free(sym[i].returnType);
 	}
 	
+	printf("\n");
 	printf("---------- PARSING TREE ----------\n");
-	printTree(root);
+	printTree(root, 0);
 	
 	printf("\n\n");
 	printf("Program Valid");
@@ -396,13 +399,32 @@ struct node* createNode(struct node *left, struct node *right, char *token) {
 	return(newnode);
 }
 
-void printTree(struct node *tree) {
-    int i; 
+void printTree(struct node *tree, int space) {
+   /* int i; 
     if (tree->left) {
         printTree(tree->left); 
     } 
     printf("%s, ", tree->token); 
     if (tree->right) {  
         printTree(tree->right); 
-    }
+    }*/
+
+	if (tree == NULL)
+        return;
+ 
+    // Increase distance between levels
+    space += COUNTPRINTTREE;
+ 
+    // Process right child first
+    printTree(tree->right, space);
+ 
+    // Print current node after space
+    // count
+    printf("\n");
+    for (int i = COUNTPRINTTREE; i < space; i++)
+        printf(" ");
+    printf("%s\n", tree->token);
+ 
+    // Process left child
+    printTree(tree->left, space);
 }

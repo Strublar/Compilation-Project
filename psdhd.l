@@ -73,17 +73,17 @@ write	write
     /*** Rules section ***/
 	
 	
-{character}	{return(CHARACTER);}	
-{string}	{return(STRING);}	
+{character}	{strcpy(yylval.node_object.name,(yytext)); return(CHARACTER);}	
+{string}	{strcpy(yylval.node_object.name,(yytext)); return(STRING);}	
 
-{number}	{return(NUMBER);}		
+{number}	{strcpy(yylval.node_object.name,(yytext)); return(NUMBER);}		
 
-{int-type}		{strcpy(yylval.node_object.name,(yytext)); yylval.str = strdup(yytext);return(INT_TYPE);}		
-{real-type}		{strcpy(yylval.node_object.name,(yytext)); yylval.str = strdup(yytext);return(REAL_TYPE);}
-{boolean-type}	{strcpy(yylval.node_object.name,(yytext)); yylval.str = strdup(yytext);return(BOOLEAN_TYPE);}
-{char-type}		{strcpy(yylval.node_object.name,(yytext)); yylval.str = strdup(yytext);return(CHAR_TYPE);}
-{string-type}	{strcpy(yylval.node_object.name,(yytext)); yylval.str = strdup(yytext);return(STRING_TYPE);}
-{void-type}		{strcpy(yylval.node_object.name,(yytext)); yylval.str = strdup(yytext);return(VOID_TYPE);}
+{int-type}		{strcpy(yylval.node_object.name,(yytext)); return(INT_TYPE);}		
+{real-type}		{strcpy(yylval.node_object.name,(yytext)); return(REAL_TYPE);}
+{boolean-type}	{strcpy(yylval.node_object.name,(yytext)); return(BOOLEAN_TYPE);}
+{char-type}		{strcpy(yylval.node_object.name,(yytext)); return(CHAR_TYPE);}
+{string-type}	{strcpy(yylval.node_object.name,(yytext)); return(STRING_TYPE);}
+{void-type}		{strcpy(yylval.node_object.name,(yytext)); return(VOID_TYPE);}
 
 {true}		{strcpy(yylval.node_object.name,(yytext)); return(TRUE);}
 {false}		{strcpy(yylval.node_object.name,(yytext)); return(FALSE);}
@@ -119,7 +119,7 @@ write	write
 {read}		{strcpy(yylval.node_object.name,(yytext)); return(READ);}		
 {write}		{strcpy(yylval.node_object.name,(yytext)); return(WRITE);}			
 
-{identifier}	{strcpy(yylval.node_object.name,(yytext)); yylval.str = strdup(yytext);return(IDENTIFIER);}
+{identifier}	{strcpy(yylval.node_object.name,(yytext)); return(IDENTIFIER);}
 
 
 \/\/.*	{ ; }
