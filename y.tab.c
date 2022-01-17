@@ -371,18 +371,32 @@ union yyalloc
 #endif
 
 /* YYFINAL -- State number of the termination state.  */
+<<<<<<< Updated upstream
 #define YYFINAL  12
 /* YYLAST -- Last index in YYTABLE.  */
 #define YYLAST   17
+=======
+#define YYFINAL  3
+/* YYLAST -- Last index in YYTABLE.  */
+#define YYLAST   1
+>>>>>>> Stashed changes
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  15
 /* YYNNTS -- Number of nonterminals.  */
+<<<<<<< Updated upstream
 #define YYNNTS  10
 /* YYNRULES -- Number of rules.  */
 #define YYNRULES  19
 /* YYNRULES -- Number of states.  */
 #define YYNSTATES  25
+=======
+#define YYNNTS  2
+/* YYNRULES -- Number of rules.  */
+#define YYNRULES  2
+/* YYNRULES -- Number of states.  */
+#define YYNSTATES  4
+>>>>>>> Stashed changes
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
@@ -428,25 +442,37 @@ static const yytype_uint8 yytranslate[] =
    YYRHS.  */
 static const yytype_uint8 yyprhs[] =
 {
+<<<<<<< Updated upstream
        0,     0,     3,     5,     7,    11,    12,    14,    16,    18,
       19,    25,    26,    30,    34,    36,    38,    40,    42,    44
+=======
+       0,     0,     3
+>>>>>>> Stashed changes
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
+<<<<<<< Updated upstream
       16,     0,    -1,    17,    -1,    18,    -1,    17,    12,    18,
       -1,    -1,    19,    -1,    22,    -1,    23,    -1,    -1,     6,
       11,    20,    13,    24,    -1,    -1,     6,    11,    21,    -1,
       11,    13,    24,    -1,    14,    -1,    11,    -1,     5,    -1,
        4,    -1,     3,    -1,     7,    -1
+=======
+      47,     0,    -1,    29,    -1
+>>>>>>> Stashed changes
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
+<<<<<<< Updated upstream
        0,    40,    40,    44,    45,    49,    51,    52,    53,    58,
       58,    59,    59,    63,    69,    73,    74,    75,    76,    77
+=======
+       0,   100,   100
+>>>>>>> Stashed changes
 };
 #endif
 
@@ -456,11 +482,22 @@ static const yytype_uint8 yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "CHARACTER", "STRING", "NUMBER",
+<<<<<<< Updated upstream
   "VARIABLE_TYPE", "BOOLEAN", "COMPARATOR_OPERATOR", "ARITHMETIC_OPERATOR",
   "MATHEMATICAL_FUNCTION", "IDENTIFIER", "'\\n'", "'='", "\"if\"",
   "$accept", "program", "statement_list", "statement",
   "declaration_statement", "$@1", "$@2", "assignement_statement",
   "if_statement", "expression", 0
+=======
+  "INT_TYPE", "REAL_TYPE", "BOOLEAN_TYPE", "CHAR_TYPE", "STRING_TYPE",
+  "VOID_TYPE", "ADDITION_OPERATOR", "SUBSTRACTION_OPERATOR",
+  "MULTIPLICATION_OPERATOR", "DIVISION_OPERATOR", "AND_OPERATOR",
+  "OR_OPERATOR", "NOT_OPERATOR", "INF_OPERATOR", "INFEQ_OPERATOR",
+  "SUP_OPERATOR", "SUPEQ_OPERATOR", "EQ_OPERATOR", "DIFF_OPERATOR", "TRUE",
+  "FALSE", "','", "MATHEMATICAL_FUNCTION", "IDENTIFIER", "FUNCTION", "IF",
+  "THEN", "ELSE", "START", "END", "RETURN", "WHILE", "DO", "READ", "WRITE",
+  "'\\n'", "'='", "'('", "')'", "':'", "$accept", "identifier", 0
+>>>>>>> Stashed changes
 };
 #endif
 
@@ -477,15 +514,23 @@ static const yytype_uint16 yytoknum[] =
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
+<<<<<<< Updated upstream
        0,    15,    16,    17,    17,    18,    18,    18,    18,    20,
       19,    21,    19,    22,    23,    24,    24,    24,    24,    24
+=======
+       0,    46,    47
+>>>>>>> Stashed changes
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
+<<<<<<< Updated upstream
        0,     2,     1,     1,     3,     0,     1,     1,     1,     0,
        5,     0,     3,     3,     1,     1,     1,     1,     1,     1
+=======
+       0,     2,     1
+>>>>>>> Stashed changes
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -493,37 +538,57 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
+<<<<<<< Updated upstream
        5,     0,     0,    14,     0,     2,     3,     6,     7,     8,
       11,     0,     1,     5,     0,    12,    18,    17,    16,    19,
       15,    13,     4,     0,    10
+=======
+       0,     2,     0,     1
+>>>>>>> Stashed changes
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
+<<<<<<< Updated upstream
       -1,     4,     5,     6,     7,    14,    15,     8,     9,    21
+=======
+      -1,     2
+>>>>>>> Stashed changes
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
+<<<<<<< Updated upstream
 #define YYPACT_NINF -9
 static const yytype_int8 yypact[] =
 {
       -1,    -8,    -7,    -9,     7,     0,    -9,    -9,    -9,    -9,
       -4,    -3,    -9,    -1,    -2,    -9,    -9,    -9,    -9,    -9,
       -9,    -9,    -9,    -3,    -9
+=======
+#define YYPACT_NINF -30
+static const yytype_int8 yypact[] =
+{
+     -29,   -30,     1,   -30
+>>>>>>> Stashed changes
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
+<<<<<<< Updated upstream
       -9,    -9,    -9,     1,    -9,    -9,    -9,    -9,    -9,    -6
+=======
+     -30,   -30
+>>>>>>> Stashed changes
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
    positive, shift that token.  If negative, reduce the rule which
    number is the opposite.  If zero, do what YYDEFACT says.
    If YYTABLE_NINF, syntax error.  */
+<<<<<<< Updated upstream
 #define YYTABLE_NINF -10
 static const yytype_int8 yytable[] =
 {
@@ -535,15 +600,30 @@ static const yytype_int8 yycheck[] =
 {
        3,     4,     5,    11,     7,     6,    13,     0,    11,    13,
       11,    13,    12,    14,    13,    -1,    -1,    23
+=======
+#define YYTABLE_NINF -1
+static const yytype_uint8 yytable[] =
+{
+       1,     3
+};
+
+static const yytype_uint8 yycheck[] =
+{
+      29,     0
+>>>>>>> Stashed changes
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
+<<<<<<< Updated upstream
        0,     6,    11,    14,    16,    17,    18,    19,    22,    23,
       11,    13,     0,    12,    20,    21,     3,     4,     5,     7,
       11,    24,    18,    13,    24
+=======
+       0,    29,    47,     0
+>>>>>>> Stashed changes
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1354,6 +1434,7 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
+<<<<<<< Updated upstream
         case 9:
 
 /* Line 1455 of yacc.c  */
@@ -1394,12 +1475,23 @@ yyreduce:
 /* Line 1455 of yacc.c  */
 #line 69 "psdhd.y"
     {printf("if statement parsed\n");}
+=======
+        case 2:
+
+/* Line 1455 of yacc.c  */
+#line 100 "psdhd.y"
+    { (yyval.node_object).node = createNode(NULL, NULL, (yyval.node_object).name); }
+>>>>>>> Stashed changes
     break;
 
 
 
 /* Line 1455 of yacc.c  */
+<<<<<<< Updated upstream
 #line 1403 "y.tab.c"
+=======
+#line 1447 "y.tab.c"
+>>>>>>> Stashed changes
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1611,7 +1703,11 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
+<<<<<<< Updated upstream
 #line 81 "psdhd.y"
+=======
+#line 355 "psdhd.y"
+>>>>>>> Stashed changes
 
 
 int main() {
@@ -1659,6 +1755,7 @@ int main() {
     return 1;
 }
 
+<<<<<<< Updated upstream
 int search(char *type) {
 	int i;
 	for(i=count-1; i>=0; i--) {
@@ -1668,6 +1765,12 @@ int search(char *type) {
 		}
 	}
 	return 0;
+=======
+void yyerror(char *errormsg)
+{
+    fprintf(stderr, "%s\n", errormsg);
+    exit(1);
+>>>>>>> Stashed changes
 }
 
 void add(char c) {
