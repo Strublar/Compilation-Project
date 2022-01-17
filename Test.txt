@@ -1,8 +1,3 @@
-function TestFunction(int arg1, string arg2 = "test") : int
-begin
-	arg1 = arg1 + 25
-	arg2 = "Hello " + "World"
-	read("Enter a word", arg2)
-	return arg1*2
-	arg1 = 0
-end
+vartest = 5
+int abc = 2
+int abc = 3

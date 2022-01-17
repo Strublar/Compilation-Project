@@ -33,6 +33,10 @@ struct node {
 struct node *root;
 struct node* createNode(struct node *left, struct node *right, char *token);
 void printTree(struct node *tree, int space);
+void check_declaration(char *name);
+int error_index = 0;
+char errors[10][100];
+char reserved[11][10] = {"function", "start", "end", "return", "if", "then", "else", "while", "do", "read", "write"};
 
 %}
 %union {
@@ -124,6 +128,7 @@ statement:
 		
 declaration_statement:
 		variable_type IDENTIFIER '=' expression 	{ 
+														printf("hooooooooooooooooooooo");
 														addSymbol("Variable", $1.node->token, $2.name);
 														$2.node = createNode(NULL, NULL, $2.name);
 														struct node *type_id = createNode($1.node, $2.node, "decl_without_assign");
@@ -146,6 +151,7 @@ variable_type:
 		
 assignement_statement:
 		IDENTIFIER '=' expression 	{ 
+										check_declaration($1.name);
 										$1.node = createNode(NULL, NULL, $1.name);
 										$$.node = createNode($1.node, $3.node, "assignement_statement"); 
 									}			
@@ -209,6 +215,7 @@ do_while_statement:
 read_statement:
 		READ '(' STRING ',' IDENTIFIER ')'
 			{ 
+				check_declaration($5.name);
 				$1.node = createNode(NULL, NULL, $1.name);
 				$3.node = createNode(NULL, NULL, $3.name);
 				$5.node = createNode(NULL, NULL, $5.name);
@@ -266,7 +273,8 @@ value:
 		| CHARACTER			{ $$.node = createNode(NULL, NULL, $1.name); }
 		| TRUE				{ $$.node = createNode(NULL, NULL, $1.name); }
 		| FALSE				{ $$.node = createNode(NULL, NULL, $1.name); }
-		| IDENTIFIER		{ $$.node = createNode(NULL, NULL, $1.name); }
+		| IDENTIFIER		{ check_declaration($1.name);
+							  $$.node = createNode(NULL, NULL, $1.name); }
 		;
 	
 
@@ -356,6 +364,7 @@ argument_declaration:
 		
 function_call:
 		IDENTIFIER '(' argument_list ')'  	{ 
+												check_declaration($1.name);
 												$1.node = createNode(NULL, NULL, $1.name);
 												$$.node = createNode($1.node, $3.node, "function_call"); 
 											}
@@ -393,6 +402,18 @@ int main(int argc, char const *argv[]) {
 	printTree(root, 0);
 	
 	printf("\n\n");
+	printf("---------- SEMANTIC ANALYSIS ----------\n");
+	if(error_index > 0) {
+		printf("%d error(s) encountered during the execution.\n", error_index);
+		for(int i = 0; i < error_index; i++){
+			printf("       -> %s", errors[i]);
+		}
+	} else {
+		printf("No error found :)");
+	}
+	
+	
+	printf("\n\n");
 	printf("Program Valid");
 	return 0;
 }
@@ -404,7 +425,19 @@ void yyerror(char *errormsg)
 }
 
 void addSymbol(char* type, char* variable_type, char* name) {
-	query=searchSymbol(name);
+
+	for(int i = 0; i < 11; i++) {   
+		printf(name);
+		printf(reserved[i]);
+		printf("\n");
+		if(strcmp(reserved[i], strdup(name)) == 0) {
+			printf("test");
+			sprintf(errors[error_index], "Line %d: Variable name \"%s\" is a reserved keyword.\n", countn + 1, name);
+			error_index++;    
+			return;
+		}  
+	} 
+	query = searchSymbol(name);
 	if(query==0) {
 		sym[count].id_name=strdup(name);
 		sym[count].returnType=strdup(variable_type);
@@ -414,8 +447,8 @@ void addSymbol(char* type, char* variable_type, char* name) {
 	}
 	else
 	{
-		char* str = "syntax error : Identifier already defined";
-		yyerror(str);
+		sprintf(errors[error_index], "Line %d: Variable \"%s\" already declared.\n", countn + 1, name);  
+		error_index++;  
 	}
 }
 
@@ -468,4 +501,12 @@ void printTree(struct node *tree, int space) {
  
     // Process left child
     printTree(tree->left, space);
+}
+
+void check_declaration(char *name) {
+    query = searchSymbol(name);
+    if(!query) { 
+        sprintf(errors[error_index], "Line %d: Variable \"%s\" has not been declared.\n", countn + 1, name);  
+        error_index++;    
+    }
 }

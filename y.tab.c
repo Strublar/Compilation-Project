@@ -104,11 +104,15 @@ struct node {
 struct node *root;
 struct node* createNode(struct node *left, struct node *right, char *token);
 void printTree(struct node *tree, int space);
+void check_declaration(char *name);
+int error_index = 0;
+char errors[10][100];
+char reserved[11][10] = {"function", "start", "end", "return", "if", "then", "else", "while", "do", "read", "write"};
 
 
 
 /* Line 189 of yacc.c  */
-#line 112 "y.tab.c"
+#line 116 "y.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -221,7 +225,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 38 "psdhd.y"
+#line 42 "psdhd.y"
 
     char *str;
 	struct var_name {
@@ -232,7 +236,7 @@ typedef union YYSTYPE
 
 
 /* Line 214 of yacc.c  */
-#line 236 "y.tab.c"
+#line 240 "y.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -244,7 +248,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 248 "y.tab.c"
+#line 252 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -557,13 +561,13 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    97,    97,   105,   106,   112,   113,   114,   115,   116,
-     117,   118,   119,   120,   121,   126,   132,   140,   141,   142,
-     143,   144,   148,   156,   170,   184,   198,   210,   222,   229,
-     237,   242,   247,   252,   257,   258,   259,   264,   265,   266,
-     267,   268,   269,   274,   279,   284,   289,   294,   299,   304,
-     309,   314,   319,   320,   325,   325,   341,   345,   350,   354,
-     358,   365,   369,   370
+       0,   101,   101,   109,   110,   116,   117,   118,   119,   120,
+     121,   122,   123,   124,   125,   130,   137,   145,   146,   147,
+     148,   149,   153,   162,   176,   190,   204,   216,   229,   236,
+     244,   249,   254,   259,   264,   265,   266,   271,   272,   273,
+     274,   275,   276,   282,   287,   292,   297,   302,   307,   312,
+     317,   322,   327,   328,   333,   333,   349,   353,   358,   362,
+     366,   374,   378,   379
 };
 #endif
 
@@ -1581,7 +1585,7 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 97 "psdhd.y"
+#line 101 "psdhd.y"
     { 
 							(yyval.node_object).node = createNode((yyvsp[(1) - (1)].node_object).node, NULL, "program"); 
 							root = (yyval.node_object).node;
@@ -1591,92 +1595,93 @@ yyreduce:
   case 3:
 
 /* Line 1455 of yacc.c  */
-#line 105 "psdhd.y"
+#line 109 "psdhd.y"
     { (yyval.node_object).node = (yyvsp[(1) - (1)].node_object).node; }
     break;
 
   case 4:
 
 /* Line 1455 of yacc.c  */
-#line 106 "psdhd.y"
+#line 110 "psdhd.y"
     { (yyval.node_object).node = createNode((yyvsp[(1) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "statement_list"); }
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 112 "psdhd.y"
+#line 116 "psdhd.y"
     { (yyval.node_object).node = (yyvsp[(1) - (1)].node_object).node; }
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 113 "psdhd.y"
+#line 117 "psdhd.y"
     { (yyval.node_object).node = (yyvsp[(1) - (1)].node_object).node; }
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 114 "psdhd.y"
+#line 118 "psdhd.y"
     { (yyval.node_object).node = (yyvsp[(1) - (1)].node_object).node; }
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 115 "psdhd.y"
+#line 119 "psdhd.y"
     { (yyval.node_object).node = (yyvsp[(1) - (1)].node_object).node; }
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 116 "psdhd.y"
+#line 120 "psdhd.y"
     { (yyval.node_object).node = (yyvsp[(1) - (1)].node_object).node; }
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 117 "psdhd.y"
+#line 121 "psdhd.y"
     { (yyval.node_object).node = (yyvsp[(1) - (1)].node_object).node; }
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 118 "psdhd.y"
+#line 122 "psdhd.y"
     { (yyval.node_object).node = (yyvsp[(1) - (1)].node_object).node; }
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 119 "psdhd.y"
+#line 123 "psdhd.y"
     { (yyval.node_object).node = (yyvsp[(1) - (1)].node_object).node; }
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 120 "psdhd.y"
+#line 124 "psdhd.y"
     { (yyval.node_object).node = (yyvsp[(1) - (1)].node_object).node; }
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 121 "psdhd.y"
+#line 125 "psdhd.y"
     { (yyval.node_object).node = (yyvsp[(1) - (1)].node_object).node; }
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 126 "psdhd.y"
+#line 130 "psdhd.y"
     { 
+														printf("hooooooooooooooooooooo");
 														addSymbol("Variable", (yyvsp[(1) - (4)].node_object).node->token, (yyvsp[(2) - (4)].node_object).name);
 														(yyvsp[(2) - (4)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (4)].node_object).name);
 														struct node *type_id = createNode((yyvsp[(1) - (4)].node_object).node, (yyvsp[(2) - (4)].node_object).node, "decl_without_assign");
@@ -1687,7 +1692,7 @@ yyreduce:
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 132 "psdhd.y"
+#line 137 "psdhd.y"
     {
 														addSymbol("Variable", (yyvsp[(1) - (2)].node_object).node->token, (yyvsp[(2) - (2)].node_object).name);
 														(yyvsp[(2) - (2)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (2)].node_object).name);
@@ -1698,43 +1703,44 @@ yyreduce:
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 140 "psdhd.y"
+#line 145 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
 
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 141 "psdhd.y"
+#line 146 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
 
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 142 "psdhd.y"
+#line 147 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
 
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 143 "psdhd.y"
+#line 148 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
 
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 144 "psdhd.y"
+#line 149 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
 
   case 22:
 
 /* Line 1455 of yacc.c  */
-#line 148 "psdhd.y"
+#line 153 "psdhd.y"
     { 
+										check_declaration((yyvsp[(1) - (3)].node_object).name);
 										(yyvsp[(1) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (3)].node_object).name);
 										(yyval.node_object).node = createNode((yyvsp[(1) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "assignement_statement"); 
 									}
@@ -1743,7 +1749,7 @@ yyreduce:
   case 23:
 
 /* Line 1455 of yacc.c  */
-#line 157 "psdhd.y"
+#line 163 "psdhd.y"
     { 
 				(yyvsp[(1) - (11)].node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (11)].node_object).name);
 				(yyvsp[(3) - (11)].node_object).node = createNode(NULL, NULL, (yyvsp[(3) - (11)].node_object).name);
@@ -1762,7 +1768,7 @@ yyreduce:
   case 24:
 
 /* Line 1455 of yacc.c  */
-#line 171 "psdhd.y"
+#line 177 "psdhd.y"
     { 
 				(yyvsp[(1) - (7)].node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (7)].node_object).name);
 				(yyvsp[(3) - (7)].node_object).node = createNode(NULL, NULL, (yyvsp[(3) - (7)].node_object).name);
@@ -1778,7 +1784,7 @@ yyreduce:
   case 25:
 
 /* Line 1455 of yacc.c  */
-#line 185 "psdhd.y"
+#line 191 "psdhd.y"
     { 
 				(yyvsp[(1) - (7)].node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (7)].node_object).name);
 				(yyvsp[(3) - (7)].node_object).node = createNode(NULL, NULL, (yyvsp[(3) - (7)].node_object).name);
@@ -1794,7 +1800,7 @@ yyreduce:
   case 26:
 
 /* Line 1455 of yacc.c  */
-#line 199 "psdhd.y"
+#line 205 "psdhd.y"
     { 
 				(yyvsp[(1) - (6)].node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (6)].node_object).name);
 				(yyvsp[(5) - (6)].node_object).node = createNode(NULL, NULL, (yyvsp[(5) - (6)].node_object).name);
@@ -1808,8 +1814,9 @@ yyreduce:
   case 27:
 
 /* Line 1455 of yacc.c  */
-#line 211 "psdhd.y"
+#line 217 "psdhd.y"
     { 
+				check_declaration((yyvsp[(5) - (6)].node_object).name);
 				(yyvsp[(1) - (6)].node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (6)].node_object).name);
 				(yyvsp[(3) - (6)].node_object).node = createNode(NULL, NULL, (yyvsp[(3) - (6)].node_object).name);
 				(yyvsp[(5) - (6)].node_object).node = createNode(NULL, NULL, (yyvsp[(5) - (6)].node_object).name);
@@ -1822,7 +1829,7 @@ yyreduce:
   case 28:
 
 /* Line 1455 of yacc.c  */
-#line 222 "psdhd.y"
+#line 229 "psdhd.y"
     { 
 											(yyvsp[(1) - (4)].node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (4)].node_object).name);
 											(yyval.node_object).node = createNode((yyvsp[(1) - (4)].node_object).node, (yyvsp[(3) - (4)].node_object).node, "write_statement");
@@ -1832,7 +1839,7 @@ yyreduce:
   case 29:
 
 /* Line 1455 of yacc.c  */
-#line 229 "psdhd.y"
+#line 236 "psdhd.y"
     { 
 											(yyvsp[(1) - (2)].node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (2)].node_object).name);
 											(yyval.node_object).node = createNode((yyvsp[(1) - (2)].node_object).node, (yyvsp[(2) - (2)].node_object).node, "return_statement"); 
@@ -1842,7 +1849,7 @@ yyreduce:
   case 30:
 
 /* Line 1455 of yacc.c  */
-#line 237 "psdhd.y"
+#line 244 "psdhd.y"
     {
 																(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 																struct node *plus_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "plus_expr");
@@ -1853,7 +1860,7 @@ yyreduce:
   case 31:
 
 /* Line 1455 of yacc.c  */
-#line 242 "psdhd.y"
+#line 249 "psdhd.y"
     {
 																(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 																struct node *minus_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "minus_expr");
@@ -1864,7 +1871,7 @@ yyreduce:
   case 32:
 
 /* Line 1455 of yacc.c  */
-#line 247 "psdhd.y"
+#line 254 "psdhd.y"
     {
 																(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 																struct node *mult_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "mult_expr");
@@ -1875,7 +1882,7 @@ yyreduce:
   case 33:
 
 /* Line 1455 of yacc.c  */
-#line 252 "psdhd.y"
+#line 259 "psdhd.y"
     {
 																(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 																struct node *div_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "div_expr");
@@ -1886,70 +1893,71 @@ yyreduce:
   case 34:
 
 /* Line 1455 of yacc.c  */
-#line 257 "psdhd.y"
+#line 264 "psdhd.y"
     { (yyval.node_object).node = (yyvsp[(2) - (3)].node_object).node; }
     break;
 
   case 35:
 
 /* Line 1455 of yacc.c  */
-#line 258 "psdhd.y"
+#line 265 "psdhd.y"
     { (yyval.node_object).node = (yyvsp[(1) - (1)].node_object).node; }
     break;
 
   case 36:
 
 /* Line 1455 of yacc.c  */
-#line 259 "psdhd.y"
+#line 266 "psdhd.y"
     { (yyval.node_object).node = (yyvsp[(1) - (1)].node_object).node; }
     break;
 
   case 37:
 
 /* Line 1455 of yacc.c  */
-#line 264 "psdhd.y"
+#line 271 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
 
   case 38:
 
 /* Line 1455 of yacc.c  */
-#line 265 "psdhd.y"
+#line 272 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
 
   case 39:
 
 /* Line 1455 of yacc.c  */
-#line 266 "psdhd.y"
+#line 273 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
 
   case 40:
 
 /* Line 1455 of yacc.c  */
-#line 267 "psdhd.y"
+#line 274 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
 
   case 41:
 
 /* Line 1455 of yacc.c  */
-#line 268 "psdhd.y"
+#line 275 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
 
   case 42:
 
 /* Line 1455 of yacc.c  */
-#line 269 "psdhd.y"
-    { (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
+#line 276 "psdhd.y"
+    { check_declaration((yyvsp[(1) - (1)].node_object).name);
+							  (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
 
   case 43:
 
 /* Line 1455 of yacc.c  */
-#line 274 "psdhd.y"
+#line 282 "psdhd.y"
     {
 														(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 														struct node *and_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "and_expr");
@@ -1960,7 +1968,7 @@ yyreduce:
   case 44:
 
 /* Line 1455 of yacc.c  */
-#line 279 "psdhd.y"
+#line 287 "psdhd.y"
     {
 														(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 														struct node *or_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "or_expr");
@@ -1971,7 +1979,7 @@ yyreduce:
   case 45:
 
 /* Line 1455 of yacc.c  */
-#line 284 "psdhd.y"
+#line 292 "psdhd.y"
     {
 														(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 														struct node *not_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "not_expr");
@@ -1982,7 +1990,7 @@ yyreduce:
   case 46:
 
 /* Line 1455 of yacc.c  */
-#line 289 "psdhd.y"
+#line 297 "psdhd.y"
     {
 														(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 														struct node *eq_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "eq_expr");
@@ -1993,7 +2001,7 @@ yyreduce:
   case 47:
 
 /* Line 1455 of yacc.c  */
-#line 294 "psdhd.y"
+#line 302 "psdhd.y"
     {
 														(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 														struct node *diff_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "diff_expr");
@@ -2004,7 +2012,7 @@ yyreduce:
   case 48:
 
 /* Line 1455 of yacc.c  */
-#line 299 "psdhd.y"
+#line 307 "psdhd.y"
     {
 														(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 														struct node *sup_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "sup_expr");
@@ -2015,7 +2023,7 @@ yyreduce:
   case 49:
 
 /* Line 1455 of yacc.c  */
-#line 304 "psdhd.y"
+#line 312 "psdhd.y"
     {
 														(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 														struct node *supeq_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "supeq_expr");
@@ -2026,7 +2034,7 @@ yyreduce:
   case 50:
 
 /* Line 1455 of yacc.c  */
-#line 309 "psdhd.y"
+#line 317 "psdhd.y"
     {
 														(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 														struct node *inf_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "inf_expr");
@@ -2037,7 +2045,7 @@ yyreduce:
   case 51:
 
 /* Line 1455 of yacc.c  */
-#line 314 "psdhd.y"
+#line 322 "psdhd.y"
     {
 														(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 														struct node *infeq_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "infeq_expr");
@@ -2048,28 +2056,28 @@ yyreduce:
   case 52:
 
 /* Line 1455 of yacc.c  */
-#line 319 "psdhd.y"
+#line 327 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
 
   case 53:
 
 /* Line 1455 of yacc.c  */
-#line 320 "psdhd.y"
+#line 328 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
 
   case 54:
 
 /* Line 1455 of yacc.c  */
-#line 325 "psdhd.y"
+#line 333 "psdhd.y"
     {(yyval.str) = (yyvsp[(1) - (8)].node_object).name;addSymbol("Function",(yyvsp[(7) - (8)].node_object).node->token,(yyvsp[(2) - (8)].node_object).name);}
     break;
 
   case 55:
 
 /* Line 1455 of yacc.c  */
-#line 327 "psdhd.y"
+#line 335 "psdhd.y"
     { 
 					(yyvsp[(1) - (14)].node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (14)].node_object).name);
 					(yyvsp[(2) - (14)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (14)].node_object).name);
@@ -2087,14 +2095,14 @@ yyreduce:
   case 56:
 
 /* Line 1455 of yacc.c  */
-#line 341 "psdhd.y"
+#line 349 "psdhd.y"
     { (yyval.node_object).node = (yyvsp[(1) - (1)].node_object).node; }
     break;
 
   case 57:
 
 /* Line 1455 of yacc.c  */
-#line 345 "psdhd.y"
+#line 353 "psdhd.y"
     { 
 																(yyvsp[(2) - (4)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (4)].node_object).name);
 																struct node *type_id = createNode((yyvsp[(1) - (4)].node_object).node, (yyvsp[(2) - (4)].node_object).node, "type_id");
@@ -2105,7 +2113,7 @@ yyreduce:
   case 58:
 
 /* Line 1455 of yacc.c  */
-#line 350 "psdhd.y"
+#line 358 "psdhd.y"
     { 
 																(yyvsp[(2) - (2)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (2)].node_object).name);
 																(yyval.node_object).node = createNode((yyvsp[(1) - (2)].node_object).node, (yyvsp[(2) - (2)].node_object).node, "arg_type_id"); 
@@ -2115,15 +2123,16 @@ yyreduce:
   case 59:
 
 /* Line 1455 of yacc.c  */
-#line 354 "psdhd.y"
+#line 362 "psdhd.y"
     { (yyval.node_object).node = createNode((yyvsp[(1) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "argdecl_argdecl"); }
     break;
 
   case 60:
 
 /* Line 1455 of yacc.c  */
-#line 358 "psdhd.y"
+#line 366 "psdhd.y"
     { 
+												check_declaration((yyvsp[(1) - (4)].node_object).name);
 												(yyvsp[(1) - (4)].node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (4)].node_object).name);
 												(yyval.node_object).node = createNode((yyvsp[(1) - (4)].node_object).node, (yyvsp[(3) - (4)].node_object).node, "function_call"); 
 											}
@@ -2132,28 +2141,28 @@ yyreduce:
   case 61:
 
 /* Line 1455 of yacc.c  */
-#line 365 "psdhd.y"
+#line 374 "psdhd.y"
     { (yyval.node_object).node = (yyvsp[(1) - (1)].node_object).node; }
     break;
 
   case 62:
 
 /* Line 1455 of yacc.c  */
-#line 369 "psdhd.y"
+#line 378 "psdhd.y"
     { (yyval.node_object).node = (yyvsp[(1) - (1)].node_object).node; }
     break;
 
   case 63:
 
 /* Line 1455 of yacc.c  */
-#line 370 "psdhd.y"
+#line 379 "psdhd.y"
     { (yyval.node_object).node = createNode((yyvsp[(1) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "arg_list"); }
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 2157 "y.tab.c"
+#line 2166 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2365,7 +2374,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 373 "psdhd.y"
+#line 382 "psdhd.y"
 
 /*** C Code section ***/
 
@@ -2389,6 +2398,18 @@ int main(int argc, char const *argv[]) {
 	printTree(root, 0);
 	
 	printf("\n\n");
+	printf("---------- SEMANTIC ANALYSIS ----------\n");
+	if(error_index > 0) {
+		printf("%d error(s) encountered during the execution.\n", error_index);
+		for(int i = 0; i < error_index; i++){
+			printf("       -> %s", errors[i]);
+		}
+	} else {
+		printf("No error found :)");
+	}
+	
+	
+	printf("\n\n");
 	printf("Program Valid");
 	return 0;
 }
@@ -2400,7 +2421,19 @@ void yyerror(char *errormsg)
 }
 
 void addSymbol(char* type, char* variable_type, char* name) {
-	query=searchSymbol(name);
+
+	for(int i = 0; i < 11; i++) {   
+		printf(name);
+		printf(reserved[i]);
+		printf("\n");
+		if(strcmp(reserved[i], strdup(name)) == 0) {
+			printf("test");
+			sprintf(errors[error_index], "Line %d: Variable name \"%s\" is a reserved keyword.\n", countn + 1, name);
+			error_index++;    
+			return;
+		}  
+	} 
+	query = searchSymbol(name);
 	if(query==0) {
 		sym[count].id_name=strdup(name);
 		sym[count].returnType=strdup(variable_type);
@@ -2410,8 +2443,8 @@ void addSymbol(char* type, char* variable_type, char* name) {
 	}
 	else
 	{
-		char* str = "syntax error : Identifier already defined";
-		yyerror(str);
+		sprintf(errors[error_index], "Line %d: Variable \"%s\" already declared.\n", countn + 1, name);  
+		error_index++;  
 	}
 }
 
@@ -2464,4 +2497,12 @@ void printTree(struct node *tree, int space) {
  
     // Process left child
     printTree(tree->left, space);
+}
+
+void check_declaration(char *name) {
+    query = searchSymbol(name);
+    if(!query) { 
+        sprintf(errors[error_index], "Line %d: Variable \"%s\" has not been declared.\n", countn + 1, name);  
+        error_index++;    
+    }
 }
