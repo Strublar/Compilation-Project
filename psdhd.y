@@ -90,7 +90,6 @@ void printTree(struct node *tree, int space);
 %type <node_object> program statement_list statement declaration_statement variable_type assignement_statement if_statement while_statement
 %type <node_object> do_while_statement read_statement write_statement return_statement expression value condition function_declaration
 %type <node_object> argument_declaration_list argument_declaration function_call argument_list argument
-%type <node_object> identifier
 
 %%
 
@@ -122,18 +121,17 @@ statement:
 		| return_statement			{ $$.node = $1.node; }
 		;
 
-identifier:
-		IDENTIFIER		{ $$.node = createNode(NULL, NULL, $$.name); }
-	;
 		
 declaration_statement:
-		variable_type identifier '=' expression 	{ 
+		variable_type IDENTIFIER '=' expression 	{ 
 														addSymbol("Variable", $1.node->token, $2.name);
+														$2.node = createNode(NULL, NULL, $2.name);
 														struct node *type_id = createNode($1.node, $2.node, "decl_without_assign");
 														$$.node = createNode(type_id, $4.node, "decl_with_assign");
 													}
-		| variable_type identifier 					{
+		| variable_type IDENTIFIER 					{
 														addSymbol("Variable", $1.node->token, $2.name);
+														$2.node = createNode(NULL, NULL, $2.name);
 														$$.node = createNode($1.node, $2.node, "decl_without_assign");
 													}
 		;
@@ -147,13 +145,20 @@ variable_type:
 		;
 		
 assignement_statement:
-		identifier '=' expression 	{ $$.node = createNode($1.node, $3.node, "assignement_statement"); }			
+		IDENTIFIER '=' expression 	{ 
+										$1.node = createNode(NULL, NULL, $1.name);
+										$$.node = createNode($1.node, $3.node, "assignement_statement"); 
+									}			
 		;
 		
 		
 if_statement:
 		IF condition THEN '\n' statement_list '\n' ELSE '\n' statement_list '\n' END 
 			{ 
+				$1.node = createNode(NULL, NULL, $1.name);
+				$3.node = createNode(NULL, NULL, $3.name);
+				$7.node = createNode(NULL, NULL, $7.name);
+				$11.node = createNode(NULL, NULL, $11.name);
 				struct node *then_stat = createNode($3.node, $5.node, "then_stat");
 				struct node *cond_then_stat = createNode($2.node, then_stat, "cond_then_stat");
 				struct node *else_stat = createNode($7.node, $9.node, "else_stat");
@@ -164,6 +169,9 @@ if_statement:
 			}
 		| IF condition THEN '\n' statement_list '\n'  END	
 			{ 
+				$1.node = createNode(NULL, NULL, $1.name);
+				$3.node = createNode(NULL, NULL, $3.name);
+				$7.node = createNode(NULL, NULL, $7.name);
 				struct node *then_stat = createNode($3.node, $5.node, "then_stat");
 				struct node *cond_then_stat = createNode($2.node, then_stat, "cond_then_stat");
 				struct node *if_cond_then_stat = createNode($1.node, cond_then_stat, "if_cond_then_stat");
@@ -175,6 +183,9 @@ if_statement:
 while_statement:
 		WHILE condition DO '\n' statement_list '\n' END 	
 			{ 
+				$1.node = createNode(NULL, NULL, $1.name);
+				$3.node = createNode(NULL, NULL, $3.name);
+				$7.node = createNode(NULL, NULL, $7.name);
 				struct node *while_cond = createNode($1.node, $2.node, "while_cond");
 				struct node *do_stat = createNode($3.node, $5.node, "do_stat");
 				struct node *while_cond_do_stat = createNode(while_cond, do_stat, "while_cond_do_stat");
@@ -186,6 +197,8 @@ while_statement:
 do_while_statement:
 		DO '\n' statement_list '\n' WHILE condition		
 			{ 
+				$1.node = createNode(NULL, NULL, $1.name);
+				$5.node = createNode(NULL, NULL, $5.name);
 				struct node *do_stat = createNode($1.node, $3.node, "do_stat");
 				struct node *while_cond = createNode($5.node, $6.node, "while_cond");
 				struct node *do_stat_while_cond = createNode(do_stat, while_cond, "do_while_statement");
@@ -194,8 +207,11 @@ do_while_statement:
 		;
 
 read_statement:
-		READ '(' STRING ',' identifier ')'
+		READ '(' STRING ',' IDENTIFIER ')'
 			{ 
+				$1.node = createNode(NULL, NULL, $1.name);
+				$3.node = createNode(NULL, NULL, $3.name);
+				$5.node = createNode(NULL, NULL, $5.name);
 				struct node *str_id = createNode($3.node, $5.node, "str_id");
 				struct node *read_str_id = createNode($1.node, str_id, "read_statement");
 				$$.node = read_str_id;
@@ -203,32 +219,38 @@ read_statement:
 		;
 	
 write_statement:
-		WRITE '(' expression ')'  		{ $$.node = createNode($1.node, $3.node, "write_statement"); }
+		WRITE '(' expression ')'  		{ 
+											$1.node = createNode(NULL, NULL, $1.name);
+											$$.node = createNode($1.node, $3.node, "write_statement");
+										}
 		;
 		
 return_statement:
-		RETURN expression				{ $$.node = createNode($1.node, $2.node, "return_statement"); }
+		RETURN expression				{ 
+											$1.node = createNode(NULL, NULL, $1.name);
+											$$.node = createNode($1.node, $2.node, "return_statement"); 
+										}
 		;
 		
 		
 expression :
 		expression ADDITION_OPERATOR expression 			{
-																 
+																$2.node = createNode(NULL, NULL, $2.name);
 																struct node *plus_expr = createNode($2.node, $3.node, "plus_expr");
 																$$.node = createNode($1.node, plus_expr, "expr_plus_expr");
 															}
 		| expression SUBSTRACTION_OPERATOR expression 		{
-																 
+																$2.node = createNode(NULL, NULL, $2.name);
 																struct node *minus_expr = createNode($2.node, $3.node, "minus_expr");
 																$$.node = createNode($1.node, minus_expr, "expr_minus_expr");
 															}
 		| expression MULTIPLICATION_OPERATOR expression 	{
-																 
+																$2.node = createNode(NULL, NULL, $2.name);
 																struct node *mult_expr = createNode($2.node, $3.node, "mult_expr");
 																$$.node = createNode($1.node, mult_expr, "expr_mult_expr");
 															}
 		| expression DIVISION_OPERATOR expression 			{
-																 
+																$2.node = createNode(NULL, NULL, $2.name);
 																struct node *div_expr = createNode($2.node, $3.node, "div_expr");
 																$$.node = createNode($1.node, div_expr, "expr_div_expr");
 															}
@@ -244,44 +266,53 @@ value:
 		| CHARACTER			{ $$.node = createNode(NULL, NULL, $1.name); }
 		| TRUE				{ $$.node = createNode(NULL, NULL, $1.name); }
 		| FALSE				{ $$.node = createNode(NULL, NULL, $1.name); }
-		| identifier		{ $$.node = createNode(NULL, NULL, $1.name); }
+		| IDENTIFIER		{ $$.node = createNode(NULL, NULL, $1.name); }
 		;
 	
 
 condition:
 		expression AND_OPERATOR expression			{
+														$2.node = createNode(NULL, NULL, $2.name);
 														struct node *and_expr = createNode($2.node, $3.node, "and_expr");
 														$$.node = createNode($1.node, and_expr, "expr_and_expr");
 													}
 		| expression OR_OPERATOR expression			{
+														$2.node = createNode(NULL, NULL, $2.name);
 														struct node *or_expr = createNode($2.node, $3.node, "or_expr");
 														$$.node = createNode($1.node, or_expr, "expr_or_expr");
 													}
 		| expression NOT_OPERATOR expression		{
+														$2.node = createNode(NULL, NULL, $2.name);
 														struct node *not_expr = createNode($2.node, $3.node, "not_expr");
 														$$.node = createNode($1.node, not_expr, "expr_not_expr");
 													}
 		| expression EQ_OPERATOR expression			{
+														$2.node = createNode(NULL, NULL, $2.name);
 														struct node *eq_expr = createNode($2.node, $3.node, "eq_expr");
 														$$.node = createNode($1.node, eq_expr, "expr_eq_expr");
 													}
 		| expression DIFF_OPERATOR expression		{
+														$2.node = createNode(NULL, NULL, $2.name);
 														struct node *diff_expr = createNode($2.node, $3.node, "diff_expr");
 														$$.node = createNode($1.node, diff_expr, "expr_diff_expr");
 													}
 		| expression SUP_OPERATOR expression		{
+														$2.node = createNode(NULL, NULL, $2.name);
 														struct node *sup_expr = createNode($2.node, $3.node, "sup_expr");
 														$$.node = createNode($1.node, sup_expr, "expr_sup_expr");
 													}
 		| expression SUPEQ_OPERATOR expression		{
+														$2.node = createNode(NULL, NULL, $2.name);
 														struct node *supeq_expr = createNode($2.node, $3.node, "supeq_expr");
 														$$.node = createNode($1.node, supeq_expr, "expr_supeq_expr");
 													}
 		| expression INF_OPERATOR expression		{
+														$2.node = createNode(NULL, NULL, $2.name);
 														struct node *inf_expr = createNode($2.node, $3.node, "inf_expr");
 														$$.node = createNode($1.node, inf_expr, "expr_inf_expr");
 													}
 		| expression INFEQ_OPERATOR expression		{
+														$2.node = createNode(NULL, NULL, $2.name);
 														struct node *infeq_expr = createNode($2.node, $3.node, "infeq_expr");
 														$$.node = createNode($1.node, infeq_expr, "expr_infeq_expr");
 													}
@@ -291,9 +322,13 @@ condition:
 
 
 function_declaration: 
-		FUNCTION identifier '(' argument_declaration_list ')' ':' variable_type '\n' {$<str>$ = $1.name;addSymbol("Function",$7.node->token,$2.name);}
+		FUNCTION IDENTIFIER '(' argument_declaration_list ')' ':' variable_type '\n' {$<str>$ = $1.name;addSymbol("Function",$7.node->token,$2.name);}
 		START '\n' statement_list '\n' END  
 				{ 
+					$1.node = createNode(NULL, NULL, $1.name);
+					$2.node = createNode(NULL, NULL, $2.name);
+					$10.node = createNode(NULL, NULL, $10.name);
+					$14.node = createNode(NULL, NULL, $14.name);
 					struct node *start_stat = createNode($10.node, $12.node, "start_stat");
 					struct node *start_stat_end = createNode(start_stat, $14.node, "start_stat_end");
 					struct node *id_arg = createNode($2.node, $4.node, "id_arg");
@@ -307,16 +342,23 @@ argument_declaration_list:
 		;
 		
 argument_declaration:
-		variable_type identifier '=' value					{ 
+		variable_type IDENTIFIER '=' value					{ 
+																$2.node = createNode(NULL, NULL, $2.name);
 																struct node *type_id = createNode($1.node, $2.node, "type_id");
 																$$.node = createNode(type_id, $4.node, "arg_type_id_value");
 															}			
-		| variable_type identifier							{ $$.node = createNode($1.node, $2.node, "arg_type_id"); }
+		| variable_type IDENTIFIER							{ 
+																$2.node = createNode(NULL, NULL, $2.name);
+																$$.node = createNode($1.node, $2.node, "arg_type_id"); 
+															}
 		| argument_declaration ',' argument_declaration		{ $$.node = createNode($1.node, $3.node, "argdecl_argdecl"); }
 		;
 		
 function_call:
-		identifier '(' argument_list ')'  	{ $$.node = createNode($1.node, $3.node, "function_call"); }
+		IDENTIFIER '(' argument_list ')'  	{ 
+												$1.node = createNode(NULL, NULL, $1.name);
+												$$.node = createNode($1.node, $3.node, "function_call"); 
+											}
 		;
 	
 argument_list:
@@ -357,7 +399,6 @@ int main(int argc, char const *argv[]) {
 
 void yyerror(char *errormsg)
 {
-	printf("salut3");
     fprintf(stderr, "%s\n", errormsg);
     exit(1);
 }

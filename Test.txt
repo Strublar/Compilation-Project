@@ -1,2 +1,8 @@
-int var1 = 5
-string var3 = TestFunction(var1, var2)
+function TestFunction(int arg1, string arg2 = "test") : int
+begin
+	arg1 = arg1 + 25
+	arg2 = "Hello " + "World"
+	read("Enter a word", arg2)
+	return arg1*2
+	arg1 = 0
+end
