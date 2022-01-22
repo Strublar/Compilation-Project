@@ -1,3 +1,2 @@
-vartest = 5
-int abc = 2
-int abc = 3
+int abc
+abc = 2+2

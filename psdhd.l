@@ -72,7 +72,8 @@ write	write
 %%
     /*** Rules section ***/
 	
-	
+
+
 {character}	{strcpy(yylval.node_object.name,(yytext)); return(CHARACTER);}	
 {string}	{strcpy(yylval.node_object.name,(yytext)); return(STRING);}	
 
@@ -106,7 +107,6 @@ write	write
 
 {mathematical-function}		{strcpy(yylval.node_object.name,(yytext)); return(MATHEMATICAL_FUNCTION);}	
 
-
 {function}	{strcpy(yylval.node_object.name,(yytext)); return(FUNCTION);}		
 {start} 	{strcpy(yylval.node_object.name,(yytext)); return(START);}		
 {end}		{strcpy(yylval.node_object.name,(yytext)); return(END);}	
@@ -120,7 +120,6 @@ write	write
 {write}		{strcpy(yylval.node_object.name,(yytext)); return(WRITE);}			
 
 {identifier}	{strcpy(yylval.node_object.name,(yytext)); return(IDENTIFIER);}
-
 
 \/\/.*	{ ; }
 \/\*(.*\n)*.*\*\/	{ ; } 

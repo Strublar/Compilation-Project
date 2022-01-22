@@ -12,9 +12,11 @@ int yylex();
 void insert_type();
 void addSymbol(char* type, char* variable_type, char* name);
 int searchSymbol(char *name);
-int count=0;
+int count = 0;
 int query;
 extern int countn;
+char *check_types(char *type1, char *type2);
+char *get_type(char *var);
 
 struct symData {
         char * id_name;
@@ -44,7 +46,9 @@ char reserved[11][10] = {"function", "start", "end", "return", "if", "then", "el
 	struct var_name {
 	   char name[100];
 	   struct node* node;
+	   char type[5];
 	} node_object;
+
 }
 %token <node_object> CHARACTER 
 %token <node_object> STRING 
@@ -92,8 +96,9 @@ char reserved[11][10] = {"function", "start", "end", "return", "if", "then", "el
 %token <node_object> WRITE 
 
 %type <node_object> program statement_list statement declaration_statement variable_type assignement_statement if_statement while_statement
-%type <node_object> do_while_statement read_statement write_statement return_statement expression value condition function_declaration
-%type <node_object> argument_declaration_list argument_declaration function_call argument_list argument
+%type <node_object> do_while_statement read_statement write_statement return_statement expression value function_declaration
+%type <node_object> argument_declaration_list argument_declaration function_call argument_list argument condition
+
 
 %%
 
@@ -128,11 +133,17 @@ statement:
 		
 declaration_statement:
 		variable_type IDENTIFIER '=' expression 	{ 
-														printf("hooooooooooooooooooooo");
 														addSymbol("Variable", $1.node->token, $2.name);
+														
 														$2.node = createNode(NULL, NULL, $2.name);
 														struct node *type_id = createNode($1.node, $2.node, "decl_without_assign");
 														$$.node = createNode(type_id, $4.node, "decl_with_assign");
+														
+														char *type_conversion = check_types($1.name, $4.type);
+														if (type_conversion != NULL){
+															struct node *type_conversion_node = createNode(NULL, $4.node, "type_conversion");
+															$$.node = createNode(type_id, type_conversion_node, "decl_with_assign");
+														}
 													}
 		| variable_type IDENTIFIER 					{
 														addSymbol("Variable", $1.node->token, $2.name);
@@ -154,6 +165,13 @@ assignement_statement:
 										check_declaration($1.name);
 										$1.node = createNode(NULL, NULL, $1.name);
 										$$.node = createNode($1.node, $3.node, "assignement_statement"); 
+										
+										char *var_type = get_type($1.name);
+										char *type_conversion = check_types(var_type, $3.type);
+										if (type_conversion != NULL){
+											struct node *type_conversion_node = createNode(NULL, $3.node, "type_conversion");
+											$$.node = createNode($1.node, type_conversion_node, "decl_with_assign");
+										}
 									}			
 		;
 		
@@ -244,21 +262,45 @@ expression :
 		expression ADDITION_OPERATOR expression 			{
 																$2.node = createNode(NULL, NULL, $2.name);
 																struct node *plus_expr = createNode($2.node, $3.node, "plus_expr");
+																
+																char *type_conversion = check_types($1.type, $3.type);
+																if (type_conversion != NULL){
+																	struct node *type_conversion_node = createNode(NULL, $3.node, "type_conversion");
+																	plus_expr = createNode($2.node, type_conversion_node, "plus_expr");
+																}
 																$$.node = createNode($1.node, plus_expr, "expr_plus_expr");
 															}
 		| expression SUBSTRACTION_OPERATOR expression 		{
 																$2.node = createNode(NULL, NULL, $2.name);
 																struct node *minus_expr = createNode($2.node, $3.node, "minus_expr");
+																
+																char *type_conversion = check_types($1.type, $3.type);
+																if (type_conversion != NULL){
+																	struct node *type_conversion_node = createNode(NULL, $3.node, "type_conversion");
+																	minus_expr = createNode($2.node, type_conversion_node, "minus_expr");
+																}
 																$$.node = createNode($1.node, minus_expr, "expr_minus_expr");
 															}
 		| expression MULTIPLICATION_OPERATOR expression 	{
 																$2.node = createNode(NULL, NULL, $2.name);
 																struct node *mult_expr = createNode($2.node, $3.node, "mult_expr");
+																
+																char *type_conversion = check_types($1.type, $3.type);
+																if (type_conversion != NULL){
+																	struct node *type_conversion_node = createNode(NULL, $3.node, "type_conversion");
+																	mult_expr = createNode($2.node, type_conversion_node, "mult_expr");
+																}
 																$$.node = createNode($1.node, mult_expr, "expr_mult_expr");
 															}
 		| expression DIVISION_OPERATOR expression 			{
 																$2.node = createNode(NULL, NULL, $2.name);
 																struct node *div_expr = createNode($2.node, $3.node, "div_expr");
+																
+																char *type_conversion = check_types($1.type, $3.type);
+																if (type_conversion != NULL){
+																	struct node *type_conversion_node = createNode(NULL, $3.node, "type_conversion");
+																	div_expr = createNode($2.node, type_conversion_node, "div_expr");
+																}
 																$$.node = createNode($1.node, div_expr, "expr_div_expr");
 															}
 		| '(' expression ')' 								{ $$.node = $2.node; }
@@ -409,7 +451,7 @@ int main(int argc, char const *argv[]) {
 			printf("       -> %s", errors[i]);
 		}
 	} else {
-		printf("No error found :)");
+		printf("No error found.");
 	}
 	
 	
@@ -427,11 +469,7 @@ void yyerror(char *errormsg)
 void addSymbol(char* type, char* variable_type, char* name) {
 
 	for(int i = 0; i < 11; i++) {   
-		printf(name);
-		printf(reserved[i]);
-		printf("\n");
 		if(strcmp(reserved[i], strdup(name)) == 0) {
-			printf("test");
 			sprintf(errors[error_index], "Line %d: Variable name \"%s\" is a reserved keyword.\n", countn + 1, name);
 			error_index++;    
 			return;
@@ -508,5 +546,40 @@ void check_declaration(char *name) {
     if(!query) { 
         sprintf(errors[error_index], "Line %d: Variable \"%s\" has not been declared.\n", countn + 1, name);  
         error_index++;    
+    }
+}
+
+char *check_types(char *type1, char *type2) { 
+
+    if(!strcmp(type2, "null"))
+		return NULL; 
+		
+    if(!strcmp(type1, type2)) 
+		return NULL; 
+
+    if(!strcmp(type1, "int") && !strcmp(type2, "float")) 
+		return "floattoint";
+		
+    if(!strcmp(type1, "float") && !strcmp(type2, "int"))
+		return "inttofloat";
+		
+    if(!strcmp(type1, "int") && !strcmp(type2, "char"))
+		return "chattoint";
+		
+    if(!strcmp(type1, "char") && !strcmp(type2, "int"))
+		return "inttochar";
+		
+    if(!strcmp(type1, "float") && !strcmp(type2, "char"))
+		return "chartofloat";
+		
+    if(!strcmp(type1, "char") && !strcmp(type2, "float"))
+		return "floattochar";
+}
+
+char *get_type(char *var) { 
+    for(int i = 0; i < count; i++) {  
+        if(!strcmp(sym[i].id_name, var)) {   
+            return sym[i].type;  
+        }
     }
 }
