@@ -621,7 +621,6 @@ char*  printCpp(struct node *tree, int space){
 	{
 		char *code = "";
 		code = addString(code, printCpp(tree->left,space));
-		code = addString(code, "\n");
 		code = addString(code, printCpp(tree->right,space));
 		return code;
 	}
@@ -634,7 +633,7 @@ char*  printCpp(struct node *tree, int space){
 		code = addString(code,printCpp(tree->left,0));
 		code = addString(code," " );
 		code = addString(code, printCpp(tree->right,0));
-		code = addString(code, ";");
+		code = addString(code, ";\n");
 		return code;
 	}
 	
@@ -647,7 +646,7 @@ char*  printCpp(struct node *tree, int space){
 		code = addString(code, printCpp(tree->left,0));
 		code = addString(code, " = ");
 		code = addString(code, printCpp(tree->right,0));
-		code = addString(code,";");
+		code = addString(code,";\n");
 		return code;
 	}
 	
@@ -708,7 +707,7 @@ char*  printCpp(struct node *tree, int space){
 		code = addString(code,printCpp(tree->right,space+1));
 		code = addString(code, "\n");
 		code = addString(code,addIndent(space));
-		code = addString(code, "}");
+		code = addString(code, "}\n");
 		return code;
 	}
 	
@@ -736,7 +735,7 @@ char*  printCpp(struct node *tree, int space){
 		code = addString(code,printCpp(tree->right,space+1));
 		code = addString(code, "\n");
 		code = addString(code,addIndent(space));
-		code = addString(code, "}");
+		code = addString(code, "}\n");
 		return code;
 	}
 	

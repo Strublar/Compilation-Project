@@ -1,22 +1,7 @@
 function main() : int
-	begin
-	int d = 5
-	while i < 10 do
-		int j = 5
-		if j > 0 then
-			int k = 5
-			if j > 0 then
-				int p = 5
-				i = 5
-			end
-		end
-		k = 10
-		p = 5
-	end
-	j = 10
-end
-
-function test(int i) : int
-begin	
-	d = 5
+begin
+    int abc = 5
+    if abc > 0 then
+        int k = 5
+    end
 end
