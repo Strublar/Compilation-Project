@@ -1,7 +1,6 @@
 function main() : int
 begin
     int abc = 5
-    if abc > 0 then
-        int k = 5
-    end
+    int abc = 6
+    def = 5
 end

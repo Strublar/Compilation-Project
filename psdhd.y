@@ -894,12 +894,6 @@ char *addIndent(int indent)
 	return string;		
 }
 
-void test(){
-	printf("\n");
-	printf("scoppppppppppppppe %d", scope);
-	printf("\n");
-	scope++;
-}
 
 void endScope(){
 
