@@ -100,7 +100,7 @@ write	write
 {multiplication-operator}	{strcpy(yylval.node_object.name,(yytext)); return(MULTIPLICATION_OPERATOR);}	
 {division-operator}			{strcpy(yylval.node_object.name,(yytext)); return(DIVISION_OPERATOR);}	
 
-{number}	{strcpy(yylval.node_object.name,(yytext));printf("NUMBER : %s",yytext); return(NUMBER);}		
+{number}	{strcpy(yylval.node_object.name,(yytext)); return(NUMBER);}		
 
 {equal-operator}			{strcpy(yylval.node_object.name,(yytext)); return(EQ_OPERATOR);}	
 {different-operator}		{strcpy(yylval.node_object.name,(yytext)); return(DIFF_OPERATOR);}	
