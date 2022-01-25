@@ -17,12 +17,14 @@ int query;
 extern int countn;
 char *check_types(char *type1, char *type2);
 char *get_type(char *var);
+void test();
 
 struct symData {
         char * id_name;
         char * returnType;
         char * type;
         int lineNumber;
+		int scope;
 } sym[64];
 
 struct node {
@@ -31,6 +33,7 @@ struct node {
   char *token;     
 };
 
+int scope;
 
 struct node *root;
 struct node* createNode(struct node *left, struct node *right, char *token);
@@ -100,7 +103,7 @@ char reserved[11][10] = {"function", "start", "end", "return", "if", "then", "el
 %token <node_object> READ 
 %token <node_object> WRITE 
 
-%type <node_object> program statement_list statement declaration_statement variable_type assignement_statement if_statement while_statement
+%type <node_object> program statement_list statement declaration_statement variable_type assignement_statement if_statement else_statement while_statement
 %type <node_object> do_while_statement read_statement write_statement return_statement expression value function_declaration
 %type <node_object> argument_declaration_list argument_declaration function_call argument_list argument condition
 
@@ -109,6 +112,7 @@ char reserved[11][10] = {"function", "start", "end", "return", "if", "then", "el
 
 program: 
 		statement_list 	{ 
+							scope = 0;
 							$$.node = createNode($1.node, NULL, "program"); 
 							root = $$.node;
 						}
@@ -138,17 +142,18 @@ statement:
 		
 declaration_statement:
 		variable_type IDENTIFIER '=' expression 	{ 
+														printf("\ndécl %s, scope: %d", $2.name,scope);
 														addSymbol("Variable", $1.node->token, $2.name);
 														
 														$2.node = createNode(NULL, NULL, $2.name);
 														struct node *type_id = createNode($1.node, $2.node, "decl");
 														$$.node = createNode(type_id, $4.node, "declaration_with_assign_statement");
 														
-														char *type_conversion = check_types($1.name, $4.type);
+														/*char *type_conversion = check_types($1.name, $4.type);
 														if (type_conversion != NULL){
 															struct node *type_conversion_node = createNode(NULL, $4.node, "type_conversion");
 															$$.node = createNode(type_id, type_conversion_node, "declaration_with_assign_statement");
-														}
+														}*/
 													}
 		| variable_type IDENTIFIER 					{
 														addSymbol("Variable", $1.node->token, $2.name);
@@ -171,29 +176,31 @@ assignement_statement:
 										$1.node = createNode(NULL, NULL, $1.name);
 										$$.node = createNode($1.node, $3.node, "assignement_statement"); 
 										
-										char *var_type = get_type($1.name);
+										/*char *var_type = get_type($1.name);
 										char *type_conversion = check_types(var_type, $3.type);
 										if (type_conversion != NULL){
 											struct node *type_conversion_node = createNode(NULL, $3.node, "type_conversion");
 											$$.node = createNode($1.node, type_conversion_node, "assignement_statement");
-										}
+										}*/
 									}			
 		;
 		
 		
 if_statement:
-		IF condition THEN '\n' statement_list '\n' ELSE '\n' statement_list '\n' END 
-			{ 
-				struct node *else_stat = createNode($5.node, $9.node, "else_stat");
-				$$.node = createNode($2.node, else_stat, "if_statement");			
+		IF 
+			{ test();
+			printf("if_stat, scope%d", scope);}
+		condition THEN '\n' statement_list '\n' else_statement END 
+		{ 
+				$$.node = createNode(NULL, NULL, "while_statement");
 			}
-		| IF condition THEN '\n' statement_list '\n'  END	
-			{ 
-
-				$$.node = createNode($2.node, $5.node, "if_statement");
-			}		
 		;
 		
+else_statement:
+	| ELSE '\n' statement_list '\n'	
+		
+	;	
+	
 while_statement:
 		WHILE condition DO '\n' statement_list '\n' END 	
 			{ 
@@ -237,44 +244,44 @@ expression :
 																$2.node = createNode(NULL, NULL, $2.name);
 																struct node *plus_expr = createNode($2.node, $3.node, "binary_token");
 																
-																char *type_conversion = check_types($1.type, $3.type);
+																/*char *type_conversion = check_types($1.type, $3.type);
 																if (type_conversion != NULL){
 																	struct node *type_conversion_node = createNode(NULL, $3.node, "type_conversion");
 																	plus_expr = createNode($2.node, type_conversion_node, "binary_token");
-																}
+																}*/
 																$$.node = createNode($1.node, plus_expr, "binary_token");
 															}
 		| expression SUBSTRACTION_OPERATOR expression 		{
 																$2.node = createNode(NULL, NULL, $2.name);
 																struct node *minus_expr = createNode($2.node, $3.node, "binary_token");
 																
-																char *type_conversion = check_types($1.type, $3.type);
+																/*char *type_conversion = check_types($1.type, $3.type);
 																if (type_conversion != NULL){
 																	struct node *type_conversion_node = createNode(NULL, $3.node, "type_conversion");
 																	minus_expr = createNode($2.node, type_conversion_node, "binary_token");
-																}
+																}*/
 																$$.node = createNode($1.node, minus_expr, "binary_token");
 															}
 		| expression MULTIPLICATION_OPERATOR expression 	{
 																$2.node = createNode(NULL, NULL, $2.name);
 																struct node *mult_expr = createNode($2.node, $3.node, "binary_token");
 																
-																char *type_conversion = check_types($1.type, $3.type);
+																/*char *type_conversion = check_types($1.type, $3.type);
 																if (type_conversion != NULL){
 																	struct node *type_conversion_node = createNode(NULL, $3.node, "type_conversion");
 																	mult_expr = createNode($2.node, type_conversion_node, "binary_token");
-																}
+																}*/
 																$$.node = createNode($1.node, mult_expr, "binary_token");
 															}
 		| expression DIVISION_OPERATOR expression 			{
 																$2.node = createNode(NULL, NULL, $2.name);
 																struct node *div_expr = createNode($2.node, $3.node, "binary_token");
 																
-																char *type_conversion = check_types($1.type, $3.type);
+																/*char *type_conversion = check_types($1.type, $3.type);
 																if (type_conversion != NULL){
 																	struct node *type_conversion_node = createNode(NULL, $3.node, "type_conversion");
 																	div_expr = createNode($2.node, type_conversion_node, "binary_token");
-																}
+																}*/
 																$$.node = createNode($1.node, div_expr, "binary_token");
 															}
 		| '(' expression ')' 								{ 	
@@ -402,17 +409,18 @@ int main(int argc, char const *argv[]) {
 	printf("\n");
 	printf("---------- SYMBOL TABLE ----------\n");
 	for(i=0; i<count; i++) {
-		printf("%s : %s (%s) defined in line %d\n",sym[i].type ,sym[i].id_name , sym[i].returnType, sym[i].lineNumber);
+		printf("%s (scope %d): %s (%s) defined in line %d\n",sym[i].type , sym[i].scope, sym[i].id_name , sym[i].returnType, sym[i].lineNumber);
 	}
 	for(i=0;i<count;i++) {
 		free(sym[i].id_name);
 		free(sym[i].type);
 		free(sym[i].returnType);
+		free(sym[i].scope);
 	}
 	
 	printf("\n");
 	printf("---------- PARSING TREE ----------\n");
-	printTree(root, 0);
+	//printTree(root, 0);
 	
 	printf("\n\n");
 	printf("---------- SEMANTIC ANALYSIS ----------\n");
@@ -425,20 +433,20 @@ int main(int argc, char const *argv[]) {
 		printf("No error found.");
 	}
 	
-	printf("\nCPP TESTS\n");
+	//printf("\nCPP TESTS\n");
 	
 	char* code = printCpp(root,0);
 	int size = strlen(code);
 	
-	printf("Size of code : %d\n",size);
-	printf(code);
+	//printf("Size of code : %d\n",size);
+	//printf(code);
 	
 	char* codeString = malloc(size);
 	strcpy(codeString,code);
 
 	FILE *codeGenerated = malloc(size);
 	codeGenerated = fopen("Program.cpp","w");
-	fprintf(codeGenerated,codeString);
+	//fprintf(codeGenerated,codeString);
 	fclose(codeGenerated);
 	
 	
@@ -471,7 +479,8 @@ void addSymbol(char* type, char* variable_type, char* name) {
 		sym[count].id_name=strdup(name);
 		sym[count].returnType=strdup(variable_type);
 		sym[count].lineNumber=countn;
-		sym[count].type=strdup(type);   
+		sym[count].type=strdup(type); 
+		sym[count].scope=scope;   		
 		count++; 
 	}
 	else
@@ -536,7 +545,7 @@ void printTree(struct node *tree, int space) {
 void check_declaration(char *name) {
     query = searchSymbol(name);
     if(!query) { 
-        printf(errors[error_index], "Line %d: Variable \"%s\" has not been declared.\n", countn + 1, name);  
+        sprintf(errors[error_index], "Line %d: Variable \"%s\" has not been declared.\n", countn + 1, name);  
         error_index++;    
     }
 }
@@ -813,4 +822,11 @@ char *addIndent(int indent)
 		strcat(string,"\t");
 	}
 	return string;		
+}
+
+void test(){
+	printf("\n");
+	printf("scoppppppppppppppe %d", scope);
+	printf("\n");
+	scope++;
 }
