@@ -17,7 +17,9 @@ int query;
 extern int countn;
 char *check_types(char *type1, char *type2);
 char *get_type(char *var);
-void test();
+void endScope();
+void removeFromArray(int index);
+int scope = 0;
 
 struct symData {
         char * id_name;
@@ -188,14 +190,12 @@ assignement_statement:
 		
 		
 if_statement:
-		IF 
-			{ test();
-			printf("if_stat, scope%d", scope);}
+		IF { scope++; }
 		condition THEN '\n' statement_list '\n' else_statement END 
 			{ 
-			
 				struct node *else_stat = createNode($6.node, $8.node, "binary_token");
-				$$.node = createNode($3.node, else_stat, "if_statement");
+				$$.node = createNode(NULL, NULL, "if_statement");
+				endScope();
 			}
 		;
 		
@@ -211,16 +211,19 @@ else_statement:
 	;	
 	
 while_statement:
-		WHILE condition DO '\n' statement_list '\n' END 	
+		WHILE condition { scope++; }
+		DO '\n' statement_list '\n' END 
 			{ 
-				$$.node = createNode($2.node, $5.node, "while_statement");
+				$$.node = createNode($2.node, $6.node, "while_statement");
+				endScope();
 			}			
 		;
 		
 do_while_statement:
-		DO '\n' statement_list '\n' WHILE condition		
+		DO { scope++; } '\n' statement_list '\n' WHILE condition		
 			{ 
-				$$.node = createNode($3.node, $6.node, "do_while_statement");
+				$$.node = createNode($4.node, $7.node, "do_while_statement");
+				endScope();
 			}			
 		;
 
@@ -364,13 +367,16 @@ condition:
 
 
 function_declaration: 
-		FUNCTION IDENTIFIER '(' argument_declaration_list ')' ':' variable_type '\n' START '\n' statement_list '\n' END		{ 
-																																addSymbol("Function",$7.node->token,$2.name);
-																																$2.node = createNode(NULL, NULL, $2.name);
+		FUNCTION { scope++; }
+		IDENTIFIER '(' argument_declaration_list ')' ':' variable_type '\n' START '\n' statement_list '\n' END		{ 
+																																addSymbol("Function",$8.node->token,$3.name);
+																																$3.node = createNode(NULL, NULL, $3.name);
 																																
-																																struct node *id_ret = createNode($7.node, $2.node, "function_id_type");
-																																struct node *arg_stat = createNode($4.node, $11.node, "function_args_statements");
+																																struct node *id_ret = createNode($8.node, $3.node, "function_id_type");
+																																struct node *arg_stat = createNode($5.node, $12.node, "function_args_statements");
 																																$$.node = createNode(id_ret, arg_stat, "function_declaration");
+																																
+																																endScope();
 																															}
 				
 		;
@@ -900,4 +906,23 @@ void test(){
 	printf("scoppppppppppppppe %d", scope);
 	printf("\n");
 	scope++;
+}
+
+void endScope(){
+
+	for(int i=count-1; i>=0; i--) {
+        if(sym[i].scope == scope) { 
+			removeFromArray(i);
+        }
+    } 
+	scope--;
+}
+
+void removeFromArray(int index){
+	printf("deleting %s  ", sym[index].id_name);
+
+	for(int i = index; i < count - 1; i++){
+		sym[i] = sym[i + 1];
+	}
+	count--;
 }

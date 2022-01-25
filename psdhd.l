@@ -107,7 +107,6 @@ write	write
 {superior-operator}			{strcpy(yylval.node_object.name,(yytext)); return(SUP_OPERATOR);}	
 {superior-equal-operator}	{strcpy(yylval.node_object.name,(yytext)); return(SUPEQ_OPERATOR);}	
 {and-operator}				{strcpy(yylval.node_object.name,(yytext)); return(AND_OPERATOR);}	
-{or-operator}				{strcpy(yylval.node_object.name,(yytext)); return(OR_OPERATOR);}	
 {not-operator}				{strcpy(yylval.node_object.name,(yytext)); return(NOT_OPERATOR);}	
 	
 
