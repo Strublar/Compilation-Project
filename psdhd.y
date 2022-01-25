@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define COUNTPRINTTREE 10
+#define COUNTPRINTTREE 5
 
 void yyerror(char *errormsg);
 int yylex();
@@ -35,6 +35,8 @@ struct node {
 struct node *root;
 struct node* createNode(struct node *left, struct node *right, char *token);
 void printTree(struct node *tree, int space);
+char* printCpp(struct node *tree, int space);
+char *addIndent(int indent);
 void check_declaration(char *name);
 int error_index = 0;
 char errors[10][100];
@@ -52,7 +54,6 @@ char reserved[11][10] = {"function", "start", "end", "return", "if", "then", "el
 }
 %token <node_object> CHARACTER 
 %token <node_object> STRING 
-%token <node_object> NUMBER 
 
 %token <node_object> INT_TYPE
 %token <node_object> REAL_TYPE
@@ -61,11 +62,15 @@ char reserved[11][10] = {"function", "start", "end", "return", "if", "then", "el
 %token <node_object> STRING_TYPE
 %token <node_object> VOID_TYPE
 
-
 %left <node_object> ADDITION_OPERATOR 
 %left <node_object> SUBSTRACTION_OPERATOR 
 %left <node_object> MULTIPLICATION_OPERATOR 
 %left <node_object> DIVISION_OPERATOR 
+
+%token <node_object> NUMBER 
+
+
+
 
 %left <node_object> AND_OPERATOR
 %left <node_object> OR_OPERATOR
@@ -118,16 +123,16 @@ statement_list:
 
 statement:
 		/* empty */
-		declaration_statement 		{ $$.node = $1.node; }
-		| assignement_statement 	{ $$.node = $1.node; }
-		| if_statement 				{ $$.node = $1.node; }
-		| while_statement 			{ $$.node = $1.node; }
-		| do_while_statement		{ $$.node = $1.node; }
-		| write_statement			{ $$.node = $1.node; }
-		| read_statement			{ $$.node = $1.node; }
-		| function_declaration		{ $$.node = $1.node; }
-		| function_call				{ $$.node = $1.node; }
-		| return_statement			{ $$.node = $1.node; }
+		| declaration_statement 		{ $$.node = $1.node; }
+		| assignement_statement 		{ $$.node = $1.node; }
+		| if_statement 					{ $$.node = $1.node; }
+		| while_statement 				{ $$.node = $1.node; }
+		| do_while_statement			{ $$.node = $1.node; }
+		| write_statement				{ $$.node = $1.node; }
+		| read_statement				{ $$.node = $1.node; }
+		| function_declaration			{ $$.node = $1.node; }
+		| function_call					{ $$.node = $1.node; }
+		| return_statement				{ $$.node = $1.node; }
 		;
 
 		
@@ -136,19 +141,19 @@ declaration_statement:
 														addSymbol("Variable", $1.node->token, $2.name);
 														
 														$2.node = createNode(NULL, NULL, $2.name);
-														struct node *type_id = createNode($1.node, $2.node, "decl_without_assign");
-														$$.node = createNode(type_id, $4.node, "decl_with_assign");
+														struct node *type_id = createNode($1.node, $2.node, "decl");
+														$$.node = createNode(type_id, $4.node, "declaration_with_assign_statement");
 														
 														char *type_conversion = check_types($1.name, $4.type);
 														if (type_conversion != NULL){
 															struct node *type_conversion_node = createNode(NULL, $4.node, "type_conversion");
-															$$.node = createNode(type_id, type_conversion_node, "decl_with_assign");
+															$$.node = createNode(type_id, type_conversion_node, "declaration_with_assign_statement");
 														}
 													}
 		| variable_type IDENTIFIER 					{
 														addSymbol("Variable", $1.node->token, $2.name);
 														$2.node = createNode(NULL, NULL, $2.name);
-														$$.node = createNode($1.node, $2.node, "decl_without_assign");
+														$$.node = createNode($1.node, $2.node, "declaration_without_assign_statement");
 													}
 		;
 		
@@ -170,7 +175,7 @@ assignement_statement:
 										char *type_conversion = check_types(var_type, $3.type);
 										if (type_conversion != NULL){
 											struct node *type_conversion_node = createNode(NULL, $3.node, "type_conversion");
-											$$.node = createNode($1.node, type_conversion_node, "decl_with_assign");
+											$$.node = createNode($1.node, type_conversion_node, "assignement_statement");
 										}
 									}			
 		;
@@ -179,54 +184,27 @@ assignement_statement:
 if_statement:
 		IF condition THEN '\n' statement_list '\n' ELSE '\n' statement_list '\n' END 
 			{ 
-				$1.node = createNode(NULL, NULL, $1.name);
-				$3.node = createNode(NULL, NULL, $3.name);
-				$7.node = createNode(NULL, NULL, $7.name);
-				$11.node = createNode(NULL, NULL, $11.name);
-				struct node *then_stat = createNode($3.node, $5.node, "then_stat");
-				struct node *cond_then_stat = createNode($2.node, then_stat, "cond_then_stat");
-				struct node *else_stat = createNode($7.node, $9.node, "else_stat");
-				struct node *cond_then_stat_else_stat = createNode(cond_then_stat, else_stat, "cond_then_stat_else_stat");
-				struct node *if_cond_then_stat_else_stat = createNode($1.node, cond_then_stat_else_stat, "if_cond_then_stat_else_stat");
-				struct node *if_cond_then_stat_else_stat_end = createNode(if_cond_then_stat_else_stat, $11.node, "if_cond_then_stat_else_stat_end");
-				$$.node = if_cond_then_stat_else_stat_end;			
+				struct node *else_stat = createNode($5.node, $9.node, "else_stat");
+				$$.node = createNode($2.node, else_stat, "if_statement");			
 			}
 		| IF condition THEN '\n' statement_list '\n'  END	
 			{ 
-				$1.node = createNode(NULL, NULL, $1.name);
-				$3.node = createNode(NULL, NULL, $3.name);
-				$7.node = createNode(NULL, NULL, $7.name);
-				struct node *then_stat = createNode($3.node, $5.node, "then_stat");
-				struct node *cond_then_stat = createNode($2.node, then_stat, "cond_then_stat");
-				struct node *if_cond_then_stat = createNode($1.node, cond_then_stat, "if_cond_then_stat");
-				struct node *if_cond_then_stat_end = createNode(if_cond_then_stat, $7.node, "if_statement");
-				$$.node = if_cond_then_stat_end;
+
+				$$.node = createNode($2.node, $5.node, "if_statement");
 			}		
 		;
 		
 while_statement:
 		WHILE condition DO '\n' statement_list '\n' END 	
 			{ 
-				$1.node = createNode(NULL, NULL, $1.name);
-				$3.node = createNode(NULL, NULL, $3.name);
-				$7.node = createNode(NULL, NULL, $7.name);
-				struct node *while_cond = createNode($1.node, $2.node, "while_cond");
-				struct node *do_stat = createNode($3.node, $5.node, "do_stat");
-				struct node *while_cond_do_stat = createNode(while_cond, do_stat, "while_cond_do_stat");
-				struct node *while_cond_do_stat_end = createNode(while_cond_do_stat, $7.node, "while_statement");
-				$$.node = while_cond_do_stat_end;
+				$$.node = createNode($2.node, $5.node, "while_statement");
 			}			
 		;
 		
 do_while_statement:
 		DO '\n' statement_list '\n' WHILE condition		
 			{ 
-				$1.node = createNode(NULL, NULL, $1.name);
-				$5.node = createNode(NULL, NULL, $5.name);
-				struct node *do_stat = createNode($1.node, $3.node, "do_stat");
-				struct node *while_cond = createNode($5.node, $6.node, "while_cond");
-				struct node *do_stat_while_cond = createNode(do_stat, while_cond, "do_while_statement");
-				$$.node = do_stat_while_cond;
+				$$.node = createNode($3.node, $6.node, "do_while_statement");
 			}			
 		;
 
@@ -234,26 +212,22 @@ read_statement:
 		READ '(' STRING ',' IDENTIFIER ')'
 			{ 
 				check_declaration($5.name);
-				$1.node = createNode(NULL, NULL, $1.name);
 				$3.node = createNode(NULL, NULL, $3.name);
 				$5.node = createNode(NULL, NULL, $5.name);
 				struct node *str_id = createNode($3.node, $5.node, "str_id");
-				struct node *read_str_id = createNode($1.node, str_id, "read_statement");
-				$$.node = read_str_id;
+				$$.node = createNode($3.node, $5.node, "read_statement");
 			}		
 		;
 	
 write_statement:
 		WRITE '(' expression ')'  		{ 
-											$1.node = createNode(NULL, NULL, $1.name);
-											$$.node = createNode($1.node, $3.node, "write_statement");
+											$$.node = createNode($3.node, NULL, "write_statement");
 										}
 		;
 		
 return_statement:
 		RETURN expression				{ 
-											$1.node = createNode(NULL, NULL, $1.name);
-											$$.node = createNode($1.node, $2.node, "return_statement"); 
+											$$.node = createNode($2.node,NULL, "return_statement"); 
 										}
 		;
 		
@@ -261,49 +235,51 @@ return_statement:
 expression :
 		expression ADDITION_OPERATOR expression 			{
 																$2.node = createNode(NULL, NULL, $2.name);
-																struct node *plus_expr = createNode($2.node, $3.node, "plus_expr");
+																struct node *plus_expr = createNode($2.node, $3.node, "binary_token");
 																
 																char *type_conversion = check_types($1.type, $3.type);
 																if (type_conversion != NULL){
 																	struct node *type_conversion_node = createNode(NULL, $3.node, "type_conversion");
-																	plus_expr = createNode($2.node, type_conversion_node, "plus_expr");
+																	plus_expr = createNode($2.node, type_conversion_node, "binary_token");
 																}
-																$$.node = createNode($1.node, plus_expr, "expr_plus_expr");
+																$$.node = createNode($1.node, plus_expr, "binary_token");
 															}
 		| expression SUBSTRACTION_OPERATOR expression 		{
 																$2.node = createNode(NULL, NULL, $2.name);
-																struct node *minus_expr = createNode($2.node, $3.node, "minus_expr");
+																struct node *minus_expr = createNode($2.node, $3.node, "binary_token");
 																
 																char *type_conversion = check_types($1.type, $3.type);
 																if (type_conversion != NULL){
 																	struct node *type_conversion_node = createNode(NULL, $3.node, "type_conversion");
-																	minus_expr = createNode($2.node, type_conversion_node, "minus_expr");
+																	minus_expr = createNode($2.node, type_conversion_node, "binary_token");
 																}
-																$$.node = createNode($1.node, minus_expr, "expr_minus_expr");
+																$$.node = createNode($1.node, minus_expr, "binary_token");
 															}
 		| expression MULTIPLICATION_OPERATOR expression 	{
 																$2.node = createNode(NULL, NULL, $2.name);
-																struct node *mult_expr = createNode($2.node, $3.node, "mult_expr");
+																struct node *mult_expr = createNode($2.node, $3.node, "binary_token");
 																
 																char *type_conversion = check_types($1.type, $3.type);
 																if (type_conversion != NULL){
 																	struct node *type_conversion_node = createNode(NULL, $3.node, "type_conversion");
-																	mult_expr = createNode($2.node, type_conversion_node, "mult_expr");
+																	mult_expr = createNode($2.node, type_conversion_node, "binary_token");
 																}
-																$$.node = createNode($1.node, mult_expr, "expr_mult_expr");
+																$$.node = createNode($1.node, mult_expr, "binary_token");
 															}
 		| expression DIVISION_OPERATOR expression 			{
 																$2.node = createNode(NULL, NULL, $2.name);
-																struct node *div_expr = createNode($2.node, $3.node, "div_expr");
+																struct node *div_expr = createNode($2.node, $3.node, "binary_token");
 																
 																char *type_conversion = check_types($1.type, $3.type);
 																if (type_conversion != NULL){
 																	struct node *type_conversion_node = createNode(NULL, $3.node, "type_conversion");
-																	div_expr = createNode($2.node, type_conversion_node, "div_expr");
+																	div_expr = createNode($2.node, type_conversion_node, "binary_token");
 																}
-																$$.node = createNode($1.node, div_expr, "expr_div_expr");
+																$$.node = createNode($1.node, div_expr, "binary_token");
 															}
-		| '(' expression ')' 								{ $$.node = $2.node; }
+		| '(' expression ')' 								{ 	
+																$$.node = createNode($2.node, NULL, "parenthesis_expression");
+															}
 		| function_call 									{ $$.node = $1.node; }
 		| value 											{ $$.node = $1.node; }
 		
@@ -323,48 +299,48 @@ value:
 condition:
 		expression AND_OPERATOR expression			{
 														$2.node = createNode(NULL, NULL, $2.name);
-														struct node *and_expr = createNode($2.node, $3.node, "and_expr");
-														$$.node = createNode($1.node, and_expr, "expr_and_expr");
+														struct node *and_expr = createNode($2.node, $3.node, "binary_token");
+														$$.node = createNode($1.node, and_expr, "binary_token");
 													}
 		| expression OR_OPERATOR expression			{
 														$2.node = createNode(NULL, NULL, $2.name);
-														struct node *or_expr = createNode($2.node, $3.node, "or_expr");
-														$$.node = createNode($1.node, or_expr, "expr_or_expr");
+														struct node *or_expr = createNode($2.node, $3.node, "binary_token");
+														$$.node = createNode($1.node, or_expr, "binary_token");
 													}
 		| expression NOT_OPERATOR expression		{
 														$2.node = createNode(NULL, NULL, $2.name);
-														struct node *not_expr = createNode($2.node, $3.node, "not_expr");
-														$$.node = createNode($1.node, not_expr, "expr_not_expr");
+														struct node *not_expr = createNode($2.node, $3.node, "binary_token");
+														$$.node = createNode($1.node, not_expr, "binary_token");
 													}
 		| expression EQ_OPERATOR expression			{
 														$2.node = createNode(NULL, NULL, $2.name);
-														struct node *eq_expr = createNode($2.node, $3.node, "eq_expr");
-														$$.node = createNode($1.node, eq_expr, "expr_eq_expr");
+														struct node *eq_expr = createNode($2.node, $3.node, "binary_token");
+														$$.node = createNode($1.node, eq_expr, "binary_token");
 													}
 		| expression DIFF_OPERATOR expression		{
 														$2.node = createNode(NULL, NULL, $2.name);
-														struct node *diff_expr = createNode($2.node, $3.node, "diff_expr");
-														$$.node = createNode($1.node, diff_expr, "expr_diff_expr");
+														struct node *diff_expr = createNode($2.node, $3.node, "binary_token");
+														$$.node = createNode($1.node, diff_expr, "binary_token");
 													}
 		| expression SUP_OPERATOR expression		{
 														$2.node = createNode(NULL, NULL, $2.name);
-														struct node *sup_expr = createNode($2.node, $3.node, "sup_expr");
-														$$.node = createNode($1.node, sup_expr, "expr_sup_expr");
+														struct node *sup_expr = createNode($2.node, $3.node, "binary_token");
+														$$.node = createNode($1.node, sup_expr, "binary_token");
 													}
 		| expression SUPEQ_OPERATOR expression		{
 														$2.node = createNode(NULL, NULL, $2.name);
-														struct node *supeq_expr = createNode($2.node, $3.node, "supeq_expr");
-														$$.node = createNode($1.node, supeq_expr, "expr_supeq_expr");
+														struct node *supeq_expr = createNode($2.node, $3.node, "binary_token");
+														$$.node = createNode($1.node, supeq_expr, "binary_token");
 													}
 		| expression INF_OPERATOR expression		{
 														$2.node = createNode(NULL, NULL, $2.name);
-														struct node *inf_expr = createNode($2.node, $3.node, "inf_expr");
-														$$.node = createNode($1.node, inf_expr, "expr_inf_expr");
+														struct node *inf_expr = createNode($2.node, $3.node, "binary_token");
+														$$.node = createNode($1.node, inf_expr, "binary_token");
 													}
 		| expression INFEQ_OPERATOR expression		{
 														$2.node = createNode(NULL, NULL, $2.name);
-														struct node *infeq_expr = createNode($2.node, $3.node, "infeq_expr");
-														$$.node = createNode($1.node, infeq_expr, "expr_infeq_expr");
+														struct node *infeq_expr = createNode($2.node, $3.node, "binary_token");
+														$$.node = createNode($1.node, infeq_expr, "binary_token");
 													}
 		| TRUE										{ $$.node = createNode(NULL, NULL, $1.name); }
 		| FALSE										{ $$.node = createNode(NULL, NULL, $1.name); }
@@ -372,23 +348,18 @@ condition:
 
 
 function_declaration: 
-		FUNCTION IDENTIFIER '(' argument_declaration_list ')' ':' variable_type '\n' {$<str>$ = $1.name;addSymbol("Function",$7.node->token,$2.name);}
-		START '\n' statement_list '\n' END  
-				{ 
-					$1.node = createNode(NULL, NULL, $1.name);
-					$2.node = createNode(NULL, NULL, $2.name);
-					$10.node = createNode(NULL, NULL, $10.name);
-					$14.node = createNode(NULL, NULL, $14.name);
-					struct node *start_stat = createNode($10.node, $12.node, "start_stat");
-					struct node *start_stat_end = createNode(start_stat, $14.node, "start_stat_end");
-					struct node *id_arg = createNode($2.node, $4.node, "id_arg");
-					struct node *id_arg_type = createNode(id_arg, $7.node, "id_arg_type");
-					struct node *fct_id_arg_type = createNode($1.node, id_arg_type, "fct_id_arg_type");
-					$$.node = createNode(fct_id_arg_type, start_stat_end, "function_declaration");
-				}
+		FUNCTION IDENTIFIER '(' argument_declaration_list ')' ':' variable_type '\n' START '\n' statement_list '\n' END		{ 
+																																addSymbol("Function",$7.node->token,$2.name);
+																																$2.node = createNode(NULL, NULL, $2.name);
+																																
+																																struct node *id_ret = createNode($7.node, $2.node, "function_id_type");
+																																struct node *arg_stat = createNode($4.node, $11.node, "function_args_statements");
+																																$$.node = createNode(id_ret, arg_stat, "function_declaration");
+																															}
+				
 		;
 argument_declaration_list:
-		argument_declaration		{ $$.node = $1.node; }
+		| argument_declaration		{ $$.node = $1.node; }
 		;
 		
 argument_declaration:
@@ -447,16 +418,35 @@ int main(int argc, char const *argv[]) {
 	printf("---------- SEMANTIC ANALYSIS ----------\n");
 	if(error_index > 0) {
 		printf("%d error(s) encountered during the execution.\n", error_index);
-		for(int i = 0; i < error_index; i++){
+		for(i = 0; i < error_index; i++){
 			printf("       -> %s", errors[i]);
 		}
 	} else {
 		printf("No error found.");
 	}
 	
+	printf("\nCPP TESTS\n");
 	
-	printf("\n\n");
-	printf("Program Valid");
+	char* code = printCpp(root,0);
+	int size = strlen(code);
+	
+	printf("Size of code : %d\n",size);
+	printf(code);
+	
+	char* codeString = malloc(size);
+	strcpy(codeString,code);
+
+	FILE *codeGenerated = malloc(size);
+	codeGenerated = fopen("Program.cpp","w");
+	fprintf(codeGenerated,codeString);
+	fclose(codeGenerated);
+	
+	
+	printf("\n\nProgram Valid");
+	
+	free(codeGenerated);
+	free(codeString);
+	
 	return 0;
 }
 
@@ -468,7 +458,8 @@ void yyerror(char *errormsg)
 
 void addSymbol(char* type, char* variable_type, char* name) {
 
-	for(int i = 0; i < 11; i++) {   
+	int i;
+	for(i = 0; i < 11; i++) {   
 		if(strcmp(reserved[i], strdup(name)) == 0) {
 			sprintf(errors[error_index], "Line %d: Variable name \"%s\" is a reserved keyword.\n", countn + 1, name);
 			error_index++;    
@@ -533,7 +524,8 @@ void printTree(struct node *tree, int space) {
     // Print current node after space
     // count
     printf("\n");
-    for (int i = COUNTPRINTTREE; i < space; i++)
+	int i;
+    for (i = COUNTPRINTTREE; i < space; i++)
         printf(" ");
     printf("%s\n", tree->token);
  
@@ -544,7 +536,7 @@ void printTree(struct node *tree, int space) {
 void check_declaration(char *name) {
     query = searchSymbol(name);
     if(!query) { 
-        sprintf(errors[error_index], "Line %d: Variable \"%s\" has not been declared.\n", countn + 1, name);  
+        printf(errors[error_index], "Line %d: Variable \"%s\" has not been declared.\n", countn + 1, name);  
         error_index++;    
     }
 }
@@ -576,10 +568,249 @@ char *check_types(char *type1, char *type2) {
 		return "floattochar";
 }
 
-char *get_type(char *var) { 
-    for(int i = 0; i < count; i++) {  
+char *get_type(char *var) {
+	int i;
+    for(i = 0; i < count; i++) {  
         if(!strcmp(sym[i].id_name, var)) {   
             return sym[i].type;  
         }
     }
+}
+
+
+char*  printCpp(struct node *tree, int space){
+	if(!tree)
+		return "";
+		
+	if(!strcmp(tree->token, "program"))
+	{
+		char code[1000] = "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main()\n{\n";
+		strcat(code, printCpp(tree->left,space+1));
+		strcat(code, printCpp(tree->right,space+1));
+		strcat(code,"\n\treturn 0;\n}");
+		return code;
+	}
+	
+	if(!strcmp(tree->token, "statement_list"))
+	{
+		char code[1000] = "";
+		strcat(code, printCpp(tree->left,space));
+		strcat(code, "\n");
+		strcat(code, printCpp(tree->right,space));
+		return code;
+	}
+	
+	
+	if(!strcmp(tree->token, "declaration_without_assign_statement"))
+	{
+		char code[1000] = "";
+		strcat(code,addIndent(space));
+		strcat(code,printCpp(tree->left,0));
+		strcat(code," " );
+		strcat(code, printCpp(tree->right,0));
+		strcat(code, ";");
+		return code;
+	}
+	
+	
+	
+	if(!strcmp(tree->token, "declaration_with_assign_statement"))
+	{
+		char code[1000] = "";
+		strcat(code,addIndent(space));
+		strcat(code, printCpp(tree->left,0));
+		strcat(code, " = ");
+		strcat(code, printCpp(tree->right,0));
+		strcat(code,";");
+		return code;
+	}
+	
+	if(!strcmp(tree->token, "decl"))
+	{
+		char code[1000] = "";
+		strcat(code,addIndent(space));
+		strcat(code,printCpp(tree->left,0));
+		strcat(code," " );
+		strcat(code, printCpp(tree->right,0));
+		return code;
+	}
+	
+	if(!strcmp(tree->token, "type_conversion"))
+	{
+		char code[1000] = "";
+		strcat(code, printCpp(tree->right,0));
+		return code;
+	}
+	
+	if(!strcmp(tree->token, "assignement_statement"))
+	{
+		char code[1000] = "";
+		strcat(code,addIndent(space));
+		strcat(code, printCpp(tree->left,0));
+		strcat(code, " = ");
+		strcat(code, printCpp(tree->right,0));
+		return code;
+	}
+	
+	if(!strcmp(tree->token, "binary_token"))
+	{
+		char code[1000] = "";
+		strcat(code, printCpp(tree->left,0));
+		strcat(code, " ");
+		strcat(code, printCpp(tree->right,0));
+		return code;
+	}
+	
+	if(!strcmp(tree->token, "parenthesis_expression"))
+	{
+		char code[1000] = "(";
+		strcat(code, printCpp(tree->left,0));
+		strcat(code, ")");
+		return code;
+	}
+	
+	if(!strcmp(tree->token, "if_statement"))
+	{
+		char code[1000] = "";
+		strcat(code,addIndent(space));
+		strcat(code, "if (");
+		strcat(code, printCpp(tree->left,0));
+		strcat(code, ") \n");
+		strcat(code,addIndent(space));
+		strcat(code, "{\n");
+		strcat(code,printCpp(tree->right,space+1));
+		strcat(code, "\n");
+		strcat(code,addIndent(space));
+		strcat(code, "}");
+		return code;
+	}
+	
+	
+	if(!strcmp(tree->token, "else_stat"))
+	{
+		char code[1000] = "";
+		strcat(code, printCpp(tree->left,space));
+		strcat(code, "\n");
+		strcat(code,addIndent(space-1));
+		strcat(code, "} else {\n");
+		strcat(code,printCpp(tree->right,space));
+		strcat(code, "\n");
+		return code;
+	}
+	
+	if(!strcmp(tree->token, "while_statement"))
+	{
+		char code[1000] = "";
+		strcat(code,addIndent(space));
+		strcat(code, "while (");
+		strcat(code, printCpp(tree->left,0));
+		strcat(code, ") \n");
+		strcat(code,addIndent(space));
+		strcat(code, "{\n");
+		strcat(code,printCpp(tree->right,space+1));
+		strcat(code, "\n");
+		strcat(code,addIndent(space));
+		strcat(code, "}");
+		return code;
+	}
+	
+	if(!strcmp(tree->token, "do_while_statement"))
+	{
+		char code[1000] = "";
+		strcat(code,addIndent(space));
+		strcat(code, "do {\n");
+		strcat(code, printCpp(tree->left,space+1));
+		strcat(code, "\n");
+		strcat(code,addIndent(space));
+		strcat(code, "} while (");
+		strcat(code, printCpp(tree->right,0));
+		strcat(code, ");\n");
+		return code;
+	}
+	
+	if(!strcmp(tree->token, "write_statement"))
+	{
+		char code[1000] = "";
+		strcat(code,addIndent(space));
+		strcat(code, "cout << ");
+		strcat(code, printCpp(tree->left,0));
+		strcat(code, "<< endl;\n");
+		return code;
+	}
+	
+	
+	if(!strcmp(tree->token, "read_statement"))
+	{
+		char code[1000] = "";
+		strcat(code,addIndent(space));
+		strcat(code, "cout << ");
+		strcat(code, printCpp(tree->left,0));
+		strcat(code, "<< endl;\n");
+		strcat(code,addIndent(space));
+		strcat(code, "cin >> ");
+		strcat(code, printCpp(tree->right,0));
+		strcat(code, ";\n");
+		return code;
+	}
+	
+	if(!strcmp(tree->token, "function_declaration"))
+	{
+		char code[1000] = "";
+		strcat(code,addIndent(space));
+		strcat(code, printCpp(tree->left,space));
+		strcat(code, printCpp(tree->right,space));
+		return code;
+	}
+	
+	if(!strcmp(tree->token, "function_id_type"))
+	{
+		char code[1000] = "";
+		strcat(code, printCpp(tree->left,0));
+		strcat(code, " ");
+		strcat(code, printCpp(tree->right,0));
+		return code;
+	}
+	
+	if(!strcmp(tree->token, "function_args_statements"))
+	{
+		char code[1000] = "";
+		strcat(code, "(");
+		strcat(code, printCpp(tree->left,0));
+		strcat(code, ")\n");
+		strcat(code,addIndent(space));
+		strcat(code, "{\n");
+		strcat(code, printCpp(tree->right,space+1));
+		strcat(code,addIndent(space));
+		strcat(code, "}\n");
+		return code;
+	}
+	
+	
+	if(!strcmp(tree->token, "return_statement"))
+	{
+		char code[1000] = "";
+		strcat(code,addIndent(space));
+		strcat(code, "return ");
+		strcat(code, printCpp(tree->left,0));
+		strcat(code, ";\n");
+		return code;
+	}
+	
+	
+	
+	
+	//printf(processToken(tree->token));
+	return tree->token;
+}
+
+
+char *addIndent(int indent)
+{
+	char string[1000] = "";
+	int i;
+	for(i=0;i<indent;i++)
+	{
+		strcat(string,"\t");
+	}
+	return string;		
 }

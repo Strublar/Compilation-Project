@@ -24,7 +24,15 @@ digits {digit}+
 character "'"[^’]"'"
 string \"(\\.|[^"\\])*\"
 
+
 number [-]?{digits}("."{digits})?("E"[+-]?{digits})?
+
+addition-operator "+"
+substraction-operator "-"
+multiplication-operator "*"
+division-operator "/"
+
+
 identifier {letter}({letter}|{digit}|"_")*
 
 
@@ -38,10 +46,7 @@ void-type		void
 true TRUE
 false FALSE
 
-addition-operator "+"
-substraction-operator "-"
-multiplication-operator "*"
-division-operator "/"
+
 
 
 equal-operator ==
@@ -77,7 +82,7 @@ write	write
 {character}	{strcpy(yylval.node_object.name,(yytext)); return(CHARACTER);}	
 {string}	{strcpy(yylval.node_object.name,(yytext)); return(STRING);}	
 
-{number}	{strcpy(yylval.node_object.name,(yytext)); return(NUMBER);}		
+
 
 {int-type}		{strcpy(yylval.node_object.name,(yytext)); return(INT_TYPE);}		
 {real-type}		{strcpy(yylval.node_object.name,(yytext)); return(REAL_TYPE);}
@@ -91,9 +96,11 @@ write	write
 
 
 {addition-operator}			{strcpy(yylval.node_object.name,(yytext)); return(ADDITION_OPERATOR);}	
-{substraction-operator}		{strcpy(yylval.node_object.name,(yytext)); return(SUBSTRACTION_OPERATOR);}	
+{substraction-operator}		{strcpy(yylval.node_object.name,(yytext)); printf("SUB OPERATOR");return(SUBSTRACTION_OPERATOR);}	
 {multiplication-operator}	{strcpy(yylval.node_object.name,(yytext)); return(MULTIPLICATION_OPERATOR);}	
 {division-operator}			{strcpy(yylval.node_object.name,(yytext)); return(DIVISION_OPERATOR);}	
+
+{number}	{strcpy(yylval.node_object.name,(yytext));printf("NUMBER : %s",yytext); return(NUMBER);}		
 
 {equal-operator}			{strcpy(yylval.node_object.name,(yytext)); return(EQ_OPERATOR);}	
 {different-operator}		{strcpy(yylval.node_object.name,(yytext)); return(DIFF_OPERATOR);}	

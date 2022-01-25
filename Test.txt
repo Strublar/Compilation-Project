@@ -1,2 +1,4 @@
-int abc
-abc = 2+2
+function test(int test2) : int
+begin
+	
+end

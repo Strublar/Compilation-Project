@@ -41,17 +41,17 @@
    enum yytokentype {
      CHARACTER = 258,
      STRING = 259,
-     NUMBER = 260,
-     INT_TYPE = 261,
-     REAL_TYPE = 262,
-     BOOLEAN_TYPE = 263,
-     CHAR_TYPE = 264,
-     STRING_TYPE = 265,
-     VOID_TYPE = 266,
-     ADDITION_OPERATOR = 267,
-     SUBSTRACTION_OPERATOR = 268,
-     MULTIPLICATION_OPERATOR = 269,
-     DIVISION_OPERATOR = 270,
+     INT_TYPE = 260,
+     REAL_TYPE = 261,
+     BOOLEAN_TYPE = 262,
+     CHAR_TYPE = 263,
+     STRING_TYPE = 264,
+     VOID_TYPE = 265,
+     ADDITION_OPERATOR = 266,
+     SUBSTRACTION_OPERATOR = 267,
+     MULTIPLICATION_OPERATOR = 268,
+     DIVISION_OPERATOR = 269,
+     NUMBER = 270,
      AND_OPERATOR = 271,
      OR_OPERATOR = 272,
      NOT_OPERATOR = 273,
@@ -81,17 +81,17 @@
 /* Tokens.  */
 #define CHARACTER 258
 #define STRING 259
-#define NUMBER 260
-#define INT_TYPE 261
-#define REAL_TYPE 262
-#define BOOLEAN_TYPE 263
-#define CHAR_TYPE 264
-#define STRING_TYPE 265
-#define VOID_TYPE 266
-#define ADDITION_OPERATOR 267
-#define SUBSTRACTION_OPERATOR 268
-#define MULTIPLICATION_OPERATOR 269
-#define DIVISION_OPERATOR 270
+#define INT_TYPE 260
+#define REAL_TYPE 261
+#define BOOLEAN_TYPE 262
+#define CHAR_TYPE 263
+#define STRING_TYPE 264
+#define VOID_TYPE 265
+#define ADDITION_OPERATOR 266
+#define SUBSTRACTION_OPERATOR 267
+#define MULTIPLICATION_OPERATOR 268
+#define DIVISION_OPERATOR 269
+#define NUMBER 270
 #define AND_OPERATOR 271
 #define OR_OPERATOR 272
 #define NOT_OPERATOR 273
@@ -125,7 +125,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 44 "psdhd.y"
+#line 46 "psdhd.y"
 
     char *str;
 	struct var_name {
