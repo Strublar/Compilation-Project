@@ -4,9 +4,32 @@ using namespace std;
 
 int main()
 {
-	test int(arg_type_id)
-	{
-	}
+	cout << "Welcome "<< endl;
 
-	return 0;
+"Welcome "
+	int number;
+	cout << "Enter a number : "<< endl;
+	cin >> number;
+
+	cout << "Double your number is "<< endl;
+
+	cout << 2 * number<< endl;
+
+	cout << 2 * number<< endl;
+
+	cout << 2 * number<< endl;
+
+	cout << 2 * number<< endl;
+
+	cout << 2 * number<< endl;
+
+	cout << 2 * number<< endl;
+
+	cout << 2 * number<< endl;
+
+	cout << 2 * number<< endl;
+
+	cout << 2 * number<< endl;
+
+	cout << 2 * number<< endl;
 }

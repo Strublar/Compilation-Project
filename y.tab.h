@@ -125,7 +125,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 46 "psdhd.y"
+#line 47 "psdhd.y"
 
     char *str;
 	struct var_name {

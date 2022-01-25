@@ -1,4 +1,18 @@
-function test(int test2) : int
+function main() : int
 begin
+	write("Welcome ")
+	
+	int number
+	read("Enter a number : ",number)
+	write("Double your number is ")
+	write(2*number)
+	write(2*number)
+	write(2*number)
+	write(2*number)
+	write(2*number)
+	write(2*number)
+	write(2*number)
+	write(2*number)
+	write(2*number)
 	
 end
