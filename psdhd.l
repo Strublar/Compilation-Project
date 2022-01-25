@@ -60,8 +60,6 @@ or-operator		||
 not-operator	!
 
 
-mathematical-function abs|exp|log|min|max|pow|sqrt
-
 function 	function
 start	begin
 end		end
