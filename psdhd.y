@@ -39,7 +39,7 @@ struct node *root;
 struct node* createNode(struct node *left, struct node *right, char *token);
 void printTree(struct node *tree, int space);
 char* printCpp(struct node *tree, int space);
-void addString(char* destination, char* addition);
+char* addString(char* destination, const char* addition);
 char *addIndent(int indent);
 void check_declaration(char *name);
 int error_index = 0;
@@ -127,7 +127,7 @@ statement_list:
 	
 
 statement:
-		/* empty */
+		/* empty */						{ $$.node = createNode(NULL, NULL, ""); }
 		| declaration_statement 		{ $$.node = $1.node; }
 		| assignement_statement 		{ $$.node = $1.node; }
 		| if_statement 					{ $$.node = $1.node; }
@@ -367,17 +367,20 @@ function_declaration:
 				
 		;
 argument_declaration_list:
+									{ $$.node = createNode(NULL, NULL, ""); }
 		| argument_declaration		{ $$.node = $1.node; }
 		;
 		
 argument_declaration:
 		variable_type IDENTIFIER '=' value					{ 
+																addSymbol("Variable",$1.node->token,$2.name);
 																$1.node = createNode(NULL, NULL, $1.name);
 																$2.node = createNode(NULL, NULL, $2.name);
 																struct node *type_id = createNode($1.node, $2.node, "binary_token");
 																$$.node = createNode(type_id, $4.node, "equals");
 															}			
 		| variable_type IDENTIFIER							{ 
+																addSymbol("Variable",$1.node->token,$2.name);
 																$2.node = createNode(NULL, NULL, $2.name);
 																$$.node = createNode($1.node, $2.node, "binary_token"); 
 															}
@@ -396,6 +399,7 @@ function_call:
 		;
 	
 argument_list:
+											{ $$.node = createNode(NULL, NULL, ""); }
 		| argument							{ $$.node = $1.node; }
 		;
 		
@@ -425,7 +429,7 @@ int main(int argc, char const *argv[]) {
 	
 	printf("\n");
 	printf("---------- PARSING TREE ----------\n");
-	//printTree(root, 0);
+	printTree(root, 0);
 	
 	printf("\n\n");
 	printf("---------- SEMANTIC ANALYSIS ----------\n");
@@ -599,30 +603,30 @@ char*  printCpp(struct node *tree, int space){
 		
 	if(!strcmp(tree->token, "program"))
 	{
-		char code[10000] = "#include <iostream>\n#include <string>\nusing namespace std;\n\n";
-		addString(code, printCpp(tree->left,space));
-		addString(code, printCpp(tree->right,space));
+		char *code = "#include <iostream>\n#include <string>\nusing namespace std;\n\n";
+		code = addString(code, printCpp(tree->left,space));
+		code = addString(code, printCpp(tree->right,space));
 		return code;
 	}
 	
 	if(!strcmp(tree->token, "statement_list"))
 	{
-		char code[10000] = "";
-		addString(code, printCpp(tree->left,space));
-		addString(code, "\n");
-		addString(code, printCpp(tree->right,space));
+		char *code = "";
+		code = addString(code, printCpp(tree->left,space));
+		code = addString(code, "\n");
+		code = addString(code, printCpp(tree->right,space));
 		return code;
 	}
 	
 	
 	if(!strcmp(tree->token, "declaration_without_assign_statement"))
 	{
-		char code[10000] = "";
-		addString(code,addIndent(space));
-		addString(code,printCpp(tree->left,0));
-		addString(code," " );
-		addString(code, printCpp(tree->right,0));
-		addString(code, ";");
+		char *code = "";
+		code = addString(code,addIndent(space));
+		code = addString(code,printCpp(tree->left,0));
+		code = addString(code," " );
+		code = addString(code, printCpp(tree->right,0));
+		code = addString(code, ";");
 		return code;
 	}
 	
@@ -630,220 +634,220 @@ char*  printCpp(struct node *tree, int space){
 	
 	if(!strcmp(tree->token, "declaration_with_assign_statement"))
 	{
-		char code[10000] = "";
-		addString(code,addIndent(space));
-		addString(code, printCpp(tree->left,0));
-		addString(code, " = ");
-		addString(code, printCpp(tree->right,0));
-		addString(code,";");
+		char *code = "";
+		code = addString(code,addIndent(space));
+		code = addString(code, printCpp(tree->left,0));
+		code = addString(code, " = ");
+		code = addString(code, printCpp(tree->right,0));
+		code = addString(code,";");
 		return code;
 	}
 	
 	if(!strcmp(tree->token, "decl"))
 	{
-		char code[10000] = "";
-		addString(code,addIndent(space));
-		addString(code,printCpp(tree->left,0));
-		addString(code," " );
-		addString(code, printCpp(tree->right,0));
+		char *code = "";
+		code = addString(code,addIndent(space));
+		code = addString(code,printCpp(tree->left,0));
+		code = addString(code," " );
+		code = addString(code, printCpp(tree->right,0));
 		return code;
 	}
 	
 	if(!strcmp(tree->token, "type_conversion"))
 	{
-		char code[10000] = "";
-		addString(code, printCpp(tree->right,0));
+		char *code = "";
+		code = addString(code, printCpp(tree->right,0));
 		return code;
 	}
 	
 	if(!strcmp(tree->token, "assignement_statement"))
 	{
-		char code[10000] = "";
-		addString(code,addIndent(space));
-		addString(code, printCpp(tree->left,0));
-		addString(code, " = ");
-		addString(code, printCpp(tree->right,0));
+		char *code = "";
+		code = addString(code,addIndent(space));
+		code = addString(code, printCpp(tree->left,0));
+		code = addString(code, " = ");
+		code = addString(code, printCpp(tree->right,0));
 		return code;
 	}
 	
 	if(!strcmp(tree->token, "binary_token"))
 	{
-		char code[10000] = "";
-		addString(code, printCpp(tree->left,0));
-		addString(code, " ");
-		addString(code, printCpp(tree->right,0));
+		char *code = "";
+		code = addString(code, printCpp(tree->left,0));
+		code = addString(code, " ");
+		code = addString(code, printCpp(tree->right,0));
 		return code;
 	}
 	
 	if(!strcmp(tree->token, "parenthesis_expression"))
 	{
-		char code[10000] = "(";
-		addString(code, printCpp(tree->left,0));
-		addString(code, ")");
+		char *code = "(";
+		code = addString(code, printCpp(tree->left,0));
+		code = addString(code, ")");
 		return code;
 	}
 	
 	if(!strcmp(tree->token, "if_statement"))
 	{
-		char code[10000] = "";
-		addString(code,addIndent(space));
-		addString(code, "if (");
-		addString(code, printCpp(tree->left,0));
-		addString(code, ") \n");
-		addString(code,addIndent(space));
-		addString(code, "{\n");
-		addString(code,printCpp(tree->right,space+1));
-		addString(code, "\n");
-		addString(code,addIndent(space));
-		addString(code, "}");
+		char *code = "";
+		code = addString(code,addIndent(space));
+		code = addString(code, "if (");
+		code = addString(code, printCpp(tree->left,0));
+		code = addString(code, ") \n");
+		code = addString(code,addIndent(space));
+		code = addString(code, "{\n");
+		code = addString(code,printCpp(tree->right,space+1));
+		code = addString(code, "\n");
+		code = addString(code,addIndent(space));
+		code = addString(code, "}");
 		return code;
 	}
 	
 	
 	if(!strcmp(tree->token, "else_stat"))
 	{
-		char code[10000] = "";
-		addString(code, printCpp(tree->left,space));
-		addString(code, "\n");
-		addString(code,addIndent(space-1));
-		addString(code, "} else {\n");
-		addString(code,printCpp(tree->right,space));
-		addString(code, "\n");
+		char *code = "";
+		code = addString(code, printCpp(tree->left,space));
+		code = addString(code, "\n");
+		code = addString(code,addIndent(space-1));
+		code = addString(code, "} else {\n");
+		code = addString(code,printCpp(tree->right,space));
+		code = addString(code, "\n");
 		return code;
 	}
 	
 	if(!strcmp(tree->token, "while_statement"))
 	{
-		char code[10000] = "";
-		addString(code,addIndent(space));
-		addString(code, "while (");
-		addString(code, printCpp(tree->left,0));
-		addString(code, ") \n");
-		addString(code,addIndent(space));
-		addString(code, "{\n");
-		addString(code,printCpp(tree->right,space+1));
-		addString(code, "\n");
-		addString(code,addIndent(space));
-		addString(code, "}");
+		char *code = "";
+		code = addString(code,addIndent(space));
+		code = addString(code, "while (");
+		code = addString(code, printCpp(tree->left,0));
+		code = addString(code, ") \n");
+		code = addString(code,addIndent(space));
+		code = addString(code, "{\n");
+		code = addString(code,printCpp(tree->right,space+1));
+		code = addString(code, "\n");
+		code = addString(code,addIndent(space));
+		code = addString(code, "}");
 		return code;
 	}
 	
 	if(!strcmp(tree->token, "do_while_statement"))
 	{
-		char code[10000] = "";
-		addString(code,addIndent(space));
-		addString(code, "do {\n");
-		addString(code, printCpp(tree->left,space+1));
-		addString(code, "\n");
-		addString(code,addIndent(space));
-		addString(code, "} while (");
-		addString(code, printCpp(tree->right,0));
-		addString(code, ");\n");
+		char *code = "";
+		code = addString(code,addIndent(space));
+		code = addString(code, "do {\n");
+		code = addString(code, printCpp(tree->left,space+1));
+		code = addString(code, "\n");
+		code = addString(code,addIndent(space));
+		code = addString(code, "} while (");
+		code = addString(code, printCpp(tree->right,0));
+		code = addString(code, ");\n");
 		return code;
 	}
 	
 	if(!strcmp(tree->token, "write_statement"))
 	{
-		char code[10000] = "";
-		addString(code,addIndent(space));
-		addString(code, "cout << ");
-		addString(code, printCpp(tree->left,0));
-		addString(code, "<< endl;\n");
+		char *code = "";
+		code = addString(code,addIndent(space));
+		code = addString(code, "cout << ");
+		code = addString(code, printCpp(tree->left,0));
+		code = addString(code, "<< flush;\n");
 		return code;
 	}
 	
 	
 	if(!strcmp(tree->token, "read_statement"))
 	{
-		char code[10000] = "";
-		addString(code,addIndent(space));
-		addString(code, "cout << ");
-		addString(code, printCpp(tree->left,0));
-		addString(code, "<< endl;\n");
-		addString(code,addIndent(space));
-		addString(code, "cin >> ");
-		addString(code, printCpp(tree->right,0));
-		addString(code, ";\n");
+		char *code = "";
+		code = addString(code,addIndent(space));
+		code = addString(code, "cout << ");
+		code = addString(code, printCpp(tree->left,0));
+		code = addString(code, "<< endl;\n");
+		code = addString(code,addIndent(space));
+		code = addString(code, "cin >> ");
+		code = addString(code, printCpp(tree->right,0));
+		code = addString(code, ";\n");
 		return code;
 	}
 	
 	if(!strcmp(tree->token, "function_declaration"))
 	{
-		char code[10000] = "";
-		addString(code,addIndent(space));
-		addString(code, printCpp(tree->left,space));
-		addString(code, printCpp(tree->right,space));
+		char *code = "";
+		code = addString(code,addIndent(space));
+		code = addString(code, printCpp(tree->left,space));
+		code = addString(code, printCpp(tree->right,space));
 		return code;
 	}
 	
 	if(!strcmp(tree->token, "function_id_type"))
 	{
-		char code[10000] = "";
-		addString(code, printCpp(tree->left,0));
-		addString(code, " ");
-		addString(code, printCpp(tree->right,0));
+		char *code = "";
+		code = addString(code, printCpp(tree->left,0));
+		code = addString(code, " ");
+		code = addString(code, printCpp(tree->right,0));
 		return code;
 	}
 	
 	if(!strcmp(tree->token, "function_args_statements"))
 	{
-		char code[10000] = "";
-		addString(code, "(");
-		addString(code, printCpp(tree->left,0));
-		addString(code, ")\n");
-		addString(code,addIndent(space));
-		addString(code, "{\n");
-		addString(code, printCpp(tree->right,space+1));
-		addString(code,addIndent(space));
-		addString(code, "}\n");
+		char *code = "";
+		code = addString(code, "(");
+		code = addString(code, printCpp(tree->left,0));
+		code = addString(code, ")\n");
+		code = addString(code,addIndent(space));
+		code = addString(code, "{\n");
+		code = addString(code, printCpp(tree->right,space+1));
+		code = addString(code,addIndent(space));
+		code = addString(code, "}\n");
 		return code;
 	}
 	
 	
 	if(!strcmp(tree->token, "return_statement"))
 	{
-		char code[10000] = "";
-		addString(code,addIndent(space));
-		addString(code, "return ");
-		addString(code, printCpp(tree->left,0));
-		addString(code, ";\n");
+		char *code = "";
+		code = addString(code,addIndent(space));
+		code = addString(code, "return ");
+		code = addString(code, printCpp(tree->left,0));
+		code = addString(code, ";\n");
 		return code;
 	}
 	
 	if(!strcmp(tree->token, "arguments"))
 	{
-		char code[10000] = "";
-		addString(code, printCpp(tree->left,0));
-		addString(code, ", ");
-		addString(code, printCpp(tree->right,0));
+		char *code = "";
+		code = addString(code, printCpp(tree->left,0));
+		code = addString(code, ", ");
+		code = addString(code, printCpp(tree->right,0));
 		return code;
 	}
 	
 	if(!strcmp(tree->token, "equals"))
 	{
-		char code[10000] = "";
-		addString(code, printCpp(tree->left,0));
-		addString(code, " = ");
-		addString(code, printCpp(tree->right,0));
+		char *code = "";
+		code = addString(code, printCpp(tree->left,0));
+		code = addString(code, " = ");
+		code = addString(code, printCpp(tree->right,0));
 		return code;
 	}
 	
 	if(!strcmp(tree->token, "function_call_statement"))
 	{
-		char code[10000] = "";
-		addString(code,addIndent(space));
-		addString(code, printCpp(tree->left,0));
-		addString(code, ";\n");
+		char *code = "";
+		code = addString(code,addIndent(space));
+		code = addString(code, printCpp(tree->left,0));
+		code = addString(code, ";\n");
 		return code;
 	}
 	
 	if(!strcmp(tree->token, "function_call"))
 	{
-		char code[10000] = "";
-		addString(code, printCpp(tree->left,0));
-		addString(code, "(");
-		addString(code, printCpp(tree->right,0));
-		addString(code, ")");
+		char *code = "";
+		code = addString(code, printCpp(tree->left,0));
+		code = addString(code, "(");
+		code = addString(code, printCpp(tree->right,0));
+		code = addString(code, ")");
 		return code;
 	}
 	
@@ -853,15 +857,23 @@ char*  printCpp(struct node *tree, int space){
 	return tree->token;
 }
 
-void addString(char* destination, char* addition)
+char* addString(char* destination, const char* addition)
 {
-	//printf("\nBEGIN\n");
-	//printf(addition);
-	//printf("\nEND\n");
-	
-	realloc(destination, strlen(addition)*sizeof(char));
+	char *result = malloc(strlen(destination)+strlen(addition)+1);
+    
+    if (result)
+    {
+        char *p = result;
+        
+        while (*destination)*p++ = *destination++;
 
-	strcat(destination, addition);
+        while ((*p++ = *addition++));
+    }
+    
+    return result;
+	
+	
+	
 }
 
 char *addIndent(int indent)

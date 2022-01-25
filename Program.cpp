@@ -2,34 +2,29 @@
 #include <string>
 using namespace std;
 
+
+int doubleNumber(int inputNumber)
+{
+	return 2 * inputNumber;
+
+}
+
+
+
 int main()
 {
-	cout << "Welcome "<< endl;
+	cout << "Welcome to the psdhd language demo\n"<< flush;
 
-"Welcome "
-	int number;
-	cout << "Enter a number : "<< endl;
-	cin >> number;
 
-	cout << "Double your number is "<< endl;
+	int inputNumber;
+	cout << "Enter a number\n"<< endl;
+	cin >> inputNumber;
 
-	cout << 2 * number<< endl;
 
-	cout << 2 * number<< endl;
+	cout << "\nThe double is : "<< flush;
 
-	cout << 2 * number<< endl;
+	cout << doubleNumber(inputNumber)<< flush;
 
-	cout << 2 * number<< endl;
 
-	cout << 2 * number<< endl;
-
-	cout << 2 * number<< endl;
-
-	cout << 2 * number<< endl;
-
-	cout << 2 * number<< endl;
-
-	cout << 2 * number<< endl;
-
-	cout << 2 * number<< endl;
+	return 0;
 }

@@ -1,18 +1,20 @@
+
+function doubleNumber(int inputNumber) : int
+begin
+	return 2*inputNumber
+
+end
+
+
 function main() : int
 begin
-	write("Welcome ")
+	write("Welcome to the psdhd language demo\n")
 	
-	int number
-	read("Enter a number : ",number)
-	write("Double your number is ")
-	write(2*number)
-	write(2*number)
-	write(2*number)
-	write(2*number)
-	write(2*number)
-	write(2*number)
-	write(2*number)
-	write(2*number)
-	write(2*number)
+	int inputNumber
+	read("Enter a number\n",inputNumber)
 	
+	write("\nThe double is : ")
+	write(doubleNumber(inputNumber))
+	
+	return 0 
 end
