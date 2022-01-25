@@ -1,6 +1,39 @@
+
+function doubleNumber(int parameter) : int
+begin
+	return 2*parameter
+
+end
+
+
 function main() : int
 begin
-    int abc = 5
-    int abc = 6
-    def = 5
+	write("Welcome to the psdhd language demo\n")
+	
+	int inputNumber
+	read("Enter a number\n",inputNumber)
+	
+	write("\nThe double is : ")
+	write(doubleNumber(inputNumber))
+	
+	if inputNumber > 5 then
+		write("\nInput number > 5 !")
+	end
+	
+	if inputNumber > 10 then
+		write("\nInput number > 10 !")
+	else
+		write("\nInput number < 10 !")
+	end
+	
+	write("\nwhile loop")
+	
+	while inputNumber > 0 do
+		inputNumber = inputNumber - 1
+		write("\nInput number equals : ")
+		write(inputNumber)
+	end
+	
+	write("\nThanks for the demo !\n")
+	return 0 
 end
