@@ -194,7 +194,7 @@ if_statement:
 		condition THEN '\n' statement_list '\n' else_statement END 
 			{ 
 				struct node *else_stat = createNode($6.node, $8.node, "binary_token");
-				$$.node = createNode(NULL, NULL, "if_statement");
+				$$.node = createNode($3.node, else_stat, "if_statement");
 				endScope();
 			}
 		;
