@@ -1808,7 +1808,7 @@ yyreduce:
 #line 195 "psdhd.y"
     { 
 				struct node *else_stat = createNode((yyvsp[(6) - (9)].node_object).node, (yyvsp[(8) - (9)].node_object).node, "binary_token");
-				(yyval.node_object).node = createNode(NULL, NULL, "if_statement");
+				(yyval.node_object).node = createNode((yyvsp[(3) - (9)].node_object).node, else_stat, "if_statement");
 				endScope();
 			}
     break;
@@ -2726,7 +2726,7 @@ char*  printCpp(struct node *tree, int space){
 		code = addString(code, printCpp(tree->left,0));
 		code = addString(code, " = ");
 		code = addString(code, printCpp(tree->right,0));
-		code = addString(code, ";");
+		code = addString(code, ";\n");
 		return code;
 	}
 	
@@ -2955,7 +2955,8 @@ void test(){
 
 void endScope(){
 
-	for(int i=count-1; i>=0; i--) {
+	int i;
+	for(i=count-1; i>=0; i--) {
         if(sym[i].scope == scope) { 
 			removeFromArray(i);
         }
@@ -2965,8 +2966,8 @@ void endScope(){
 
 void removeFromArray(int index){
 	printf("deleting %s  ", sym[index].id_name);
-
-	for(int i = index; i < count - 1; i++){
+	int i;
+	for(i = index; i < count - 1; i++){
 		sym[i] = sym[i + 1];
 	}
 	count--;

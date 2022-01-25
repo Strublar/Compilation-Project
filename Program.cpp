@@ -2,59 +2,32 @@
 #include <string>
 using namespace std;
 
-
-int doubleNumber(int parameter)
+int main()
 {
-	return 2 * parameter;
+	int d = 5;
+	while (i < 10) 
+	{
+		int j = 5;
+		if (j > 0) 
+		{
+			int k = 5;
+			if (j > 0) 
+			{
+				int p = 5;
+				i = 5;
+ 
+			} 
+		}
+		k = 10;
 
+		p = 5;
+
+	}
+	j = 10;
 }
 
 
-
-int main()
+int test(int i)
 {
-	cout << "Welcome to the psdhd language demo\n"<< flush;
-
-
-	int inputNumber;
-	cout << "Enter a number\n"<< endl;
-	cin >> inputNumber;
-
-
-	cout << "\nThe double is : "<< flush;
-
-	cout << doubleNumber(inputNumber)<< flush;
-
-
-	if (inputNumber > 5) 
-	{
-		cout << "\nInput number > 5 !"<< flush;
- 
-	}
-
-	if (inputNumber > 10) 
-	{
-		cout << "\nInput number > 10 !"<< flush;
- 
-	} else {
-		cout << "\nInput number < 10 !"<< flush;
-
-
-	}
-
-	cout << "\nwhile loop"<< flush;
-
-
-	while (inputNumber > 0) 
-	{
-		inputNumber = inputNumber - 1;
-		cout << "\nInput number equals : "<< flush;
-
-		cout << inputNumber<< flush;
-
-	}
-
-	cout << "\nThanks for the demo !\n"<< flush;
-
-	return 0;
+	d = 5;
 }
