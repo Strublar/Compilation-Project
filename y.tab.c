@@ -2481,26 +2481,20 @@ int main(int argc, char const *argv[]) {
 	
 	//printf("\nCPP TESTS\n");
 	
-	const char* code = malloc(300000);
-	code = printCpp(root,0);
+	const char* code = code = printCpp(root,0);
+	
 	int size = strlen(code);
 	
 	printf("Size of code : %d\n",size);
-	
-	
-	char* codeString = malloc(size);
-	strcpy(codeString,code);
 	printf(code);
-	
 	FILE *codeGenerated = fopen("Program.cpp","w");
-	fprintf(codeGenerated,codeString);
+	fprintf(codeGenerated,code);
 	fclose(codeGenerated);
 	
 	
 	printf("\n\nProgram Valid");
 	
 	free(codeGenerated);
-	free(codeString);
 	
 	return 0;
 }

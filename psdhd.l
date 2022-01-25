@@ -59,9 +59,6 @@ and-operator	&&
 or-operator		||
 not-operator	!
 
-
-mathematical-function abs|exp|log|min|max|pow|sqrt
-
 function 	function
 start	begin
 end		end
@@ -108,11 +105,7 @@ write	write
 {inferior-equal-operator}	{strcpy(yylval.node_object.name,(yytext)); return(INFEQ_OPERATOR);}	
 {superior-operator}			{strcpy(yylval.node_object.name,(yytext)); return(SUP_OPERATOR);}	
 {superior-equal-operator}	{strcpy(yylval.node_object.name,(yytext)); return(SUPEQ_OPERATOR);}	
-{and-operator}				{strcpy(yylval.node_object.name,(yytext)); return(AND_OPERATOR);}	
-{or-operator}				{strcpy(yylval.node_object.name,(yytext)); return(OR_OPERATOR);}	
-{not-operator}				{strcpy(yylval.node_object.name,(yytext)); return(NOT_OPERATOR);}	
 
-{mathematical-function}		{strcpy(yylval.node_object.name,(yytext)); return(MATHEMATICAL_FUNCTION);}	
 
 {function}	{strcpy(yylval.node_object.name,(yytext)); return(FUNCTION);}		
 {start} 	{strcpy(yylval.node_object.name,(yytext)); return(START);}		
