@@ -109,8 +109,7 @@ write	write
 {and-operator}				{strcpy(yylval.node_object.name,(yytext)); return(AND_OPERATOR);}	
 {or-operator}				{strcpy(yylval.node_object.name,(yytext)); return(OR_OPERATOR);}	
 {not-operator}				{strcpy(yylval.node_object.name,(yytext)); return(NOT_OPERATOR);}	
-
-{mathematical-function}		{strcpy(yylval.node_object.name,(yytext)); return(MATHEMATICAL_FUNCTION);}	
+	
 
 {function}	{strcpy(yylval.node_object.name,(yytext)); return(FUNCTION);}		
 {start} 	{strcpy(yylval.node_object.name,(yytext)); return(START);}		
