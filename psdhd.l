@@ -43,8 +43,8 @@ char-type		char
 string-type		string
 void-type		void
 
-true TRUE
-false FALSE
+true true
+false false
 
 
 
@@ -55,9 +55,9 @@ inferior-operator <
 inferior-equal-operator <=
 superior-operator >
 superior-equal-operator >=
-and-operator	AND
-or-operator		OR
-not-operator	NOT
+and-operator	&&
+or-operator		||
+not-operator	!
 
 
 mathematical-function abs|exp|log|min|max|pow|sqrt

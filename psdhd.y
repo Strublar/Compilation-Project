@@ -192,13 +192,21 @@ if_statement:
 			{ test();
 			printf("if_stat, scope%d", scope);}
 		condition THEN '\n' statement_list '\n' else_statement END 
-		{ 
-				$$.node = createNode(NULL, NULL, "while_statement");
+			{ 
+			
+				struct node *else_stat = createNode($6.node, $8.node, "binary_token");
+				$$.node = createNode($3.node, else_stat, "if_statement");
 			}
 		;
 		
 else_statement:
+			{ 
+				$$.node = createNode(NULL, NULL, "");
+			}
 	| ELSE '\n' statement_list '\n'	
+			{ 
+				$$.node = createNode($3.node, NULL, "else_statement");
+			}
 		
 	;	
 	
@@ -667,15 +675,16 @@ char*  printCpp(struct node *tree, int space){
 		code = addString(code, printCpp(tree->left,0));
 		code = addString(code, " = ");
 		code = addString(code, printCpp(tree->right,0));
+		code = addString(code, ";");
 		return code;
 	}
 	
 	if(!strcmp(tree->token, "binary_token"))
 	{
 		char *code = "";
-		code = addString(code, printCpp(tree->left,0));
+		code = addString(code, printCpp(tree->left,space));
 		code = addString(code, " ");
-		code = addString(code, printCpp(tree->right,0));
+		code = addString(code, printCpp(tree->right,space));
 		return code;
 	}
 	
@@ -704,14 +713,13 @@ char*  printCpp(struct node *tree, int space){
 	}
 	
 	
-	if(!strcmp(tree->token, "else_stat"))
+	if(!strcmp(tree->token, "else_statement"))
 	{
 		char *code = "";
-		code = addString(code, printCpp(tree->left,space));
 		code = addString(code, "\n");
 		code = addString(code,addIndent(space-1));
 		code = addString(code, "} else {\n");
-		code = addString(code,printCpp(tree->right,space));
+		code = addString(code,printCpp(tree->left,space));
 		code = addString(code, "\n");
 		return code;
 	}
