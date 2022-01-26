@@ -575,13 +575,13 @@ static const yytype_int8 yyrhs[] =
 static const yytype_uint16 yyrline[] =
 {
        0,   117,   117,   126,   127,   132,   133,   134,   135,   136,
-     137,   138,   139,   140,   141,   142,   147,   161,   169,   170,
-     171,   172,   173,   177,   193,   193,   203,   206,   214,   214,
-     223,   223,   231,   242,   248,   255,   266,   277,   288,   299,
-     302,   303,   308,   309,   310,   311,   312,   313,   319,   324,
-     329,   334,   339,   344,   349,   354,   359,   364,   365,   370,
-     370,   384,   385,   389,   396,   401,   405,   408,   416,   417,
-     421,   422
+     137,   138,   139,   140,   141,   142,   147,   160,   168,   169,
+     170,   171,   172,   176,   194,   194,   204,   207,   215,   215,
+     224,   224,   232,   243,   249,   256,   267,   278,   289,   300,
+     303,   304,   309,   310,   311,   312,   313,   314,   320,   325,
+     330,   335,   340,   345,   350,   355,   360,   365,   366,   371,
+     371,   385,   386,   390,   397,   402,   406,   409,   417,   418,
+     422,   423
 };
 #endif
 
@@ -1716,7 +1716,6 @@ yyreduce:
 /* Line 1455 of yacc.c  */
 #line 147 "psdhd.y"
     { 
-														printf("\ndécl %s, scope: %d", (yyvsp[(2) - (4)].node_object).name,scope);
 														addSymbol("Variable", (yyvsp[(1) - (4)].node_object).node->token, (yyvsp[(2) - (4)].node_object).name);
 														
 														(yyvsp[(2) - (4)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (4)].node_object).name);
@@ -1734,7 +1733,7 @@ yyreduce:
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 161 "psdhd.y"
+#line 160 "psdhd.y"
     {
 														addSymbol("Variable", (yyvsp[(1) - (2)].node_object).node->token, (yyvsp[(2) - (2)].node_object).name);
 														(yyvsp[(2) - (2)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (2)].node_object).name);
@@ -1745,67 +1744,69 @@ yyreduce:
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 169 "psdhd.y"
+#line 168 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
 
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 170 "psdhd.y"
+#line 169 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
 
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 171 "psdhd.y"
+#line 170 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
 
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 172 "psdhd.y"
+#line 171 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
 
   case 22:
 
 /* Line 1455 of yacc.c  */
-#line 173 "psdhd.y"
+#line 172 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
 
   case 23:
 
 /* Line 1455 of yacc.c  */
-#line 177 "psdhd.y"
+#line 176 "psdhd.y"
     { 
 										check_declaration((yyvsp[(1) - (3)].node_object).name);
 										(yyvsp[(1) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (3)].node_object).name);
 										(yyval.node_object).node = createNode((yyvsp[(1) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "assignement_statement"); 
 										
-										/*char *var_type = get_type($1.name);
-										char *type_conversion = check_types(var_type, $3.type);
-										if (type_conversion != NULL){
-											struct node *type_conversion_node = createNode(NULL, $3.node, "type_conversion");
-											$$.node = createNode($1.node, type_conversion_node, "assignement_statement");
-										}*/
+										char *var_type = get_type((yyvsp[(1) - (3)].node_object).name);
+										if (var_type != NULL){
+											char *type_conversion = check_types(var_type, (yyvsp[(3) - (3)].node_object).type);
+											if (type_conversion != NULL){
+												struct node *type_conversion_node = createNode(NULL, (yyvsp[(3) - (3)].node_object).node, "type_conversion");
+												(yyval.node_object).node = createNode((yyvsp[(1) - (3)].node_object).node, type_conversion_node, "assignement_statement");
+											}
+										}
 									}
     break;
 
   case 24:
 
 /* Line 1455 of yacc.c  */
-#line 193 "psdhd.y"
+#line 194 "psdhd.y"
     { scope++; }
     break;
 
   case 25:
 
 /* Line 1455 of yacc.c  */
-#line 195 "psdhd.y"
+#line 196 "psdhd.y"
     { 
 				struct node *else_stat = createNode((yyvsp[(6) - (9)].node_object).node, (yyvsp[(8) - (9)].node_object).node, "binary_token");
 				(yyval.node_object).node = createNode((yyvsp[(3) - (9)].node_object).node, else_stat, "if_statement");
@@ -1816,7 +1817,7 @@ yyreduce:
   case 26:
 
 /* Line 1455 of yacc.c  */
-#line 203 "psdhd.y"
+#line 204 "psdhd.y"
     { 
 				(yyval.node_object).node = createNode(NULL, NULL, "");
 			}
@@ -1825,7 +1826,7 @@ yyreduce:
   case 27:
 
 /* Line 1455 of yacc.c  */
-#line 207 "psdhd.y"
+#line 208 "psdhd.y"
     { 
 				(yyval.node_object).node = createNode((yyvsp[(3) - (4)].node_object).node, NULL, "else_statement");
 			}
@@ -1834,14 +1835,14 @@ yyreduce:
   case 28:
 
 /* Line 1455 of yacc.c  */
-#line 214 "psdhd.y"
+#line 215 "psdhd.y"
     { scope++; }
     break;
 
   case 29:
 
 /* Line 1455 of yacc.c  */
-#line 216 "psdhd.y"
+#line 217 "psdhd.y"
     { 
 				(yyval.node_object).node = createNode((yyvsp[(2) - (8)].node_object).node, (yyvsp[(6) - (8)].node_object).node, "while_statement");
 				endScope();
@@ -1851,14 +1852,14 @@ yyreduce:
   case 30:
 
 /* Line 1455 of yacc.c  */
-#line 223 "psdhd.y"
+#line 224 "psdhd.y"
     { scope++; }
     break;
 
   case 31:
 
 /* Line 1455 of yacc.c  */
-#line 224 "psdhd.y"
+#line 225 "psdhd.y"
     { 
 				(yyval.node_object).node = createNode((yyvsp[(4) - (7)].node_object).node, (yyvsp[(7) - (7)].node_object).node, "do_while_statement");
 				endScope();
@@ -1868,7 +1869,7 @@ yyreduce:
   case 32:
 
 /* Line 1455 of yacc.c  */
-#line 232 "psdhd.y"
+#line 233 "psdhd.y"
     { 
 				check_declaration((yyvsp[(5) - (6)].node_object).name);
 				(yyvsp[(3) - (6)].node_object).node = createNode(NULL, NULL, (yyvsp[(3) - (6)].node_object).name);
@@ -1881,7 +1882,7 @@ yyreduce:
   case 33:
 
 /* Line 1455 of yacc.c  */
-#line 242 "psdhd.y"
+#line 243 "psdhd.y"
     { 
 											(yyval.node_object).node = createNode((yyvsp[(3) - (4)].node_object).node, NULL, "write_statement");
 										}
@@ -1890,7 +1891,7 @@ yyreduce:
   case 34:
 
 /* Line 1455 of yacc.c  */
-#line 248 "psdhd.y"
+#line 249 "psdhd.y"
     { 
 											(yyval.node_object).node = createNode((yyvsp[(2) - (2)].node_object).node,NULL, "return_statement"); 
 										}
@@ -1899,7 +1900,7 @@ yyreduce:
   case 35:
 
 /* Line 1455 of yacc.c  */
-#line 255 "psdhd.y"
+#line 256 "psdhd.y"
     {
 																(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 																struct node *plus_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "binary_token");
@@ -1916,7 +1917,7 @@ yyreduce:
   case 36:
 
 /* Line 1455 of yacc.c  */
-#line 266 "psdhd.y"
+#line 267 "psdhd.y"
     {
 																(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 																struct node *minus_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "binary_token");
@@ -1933,7 +1934,7 @@ yyreduce:
   case 37:
 
 /* Line 1455 of yacc.c  */
-#line 277 "psdhd.y"
+#line 278 "psdhd.y"
     {
 																(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 																struct node *mult_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "binary_token");
@@ -1950,7 +1951,7 @@ yyreduce:
   case 38:
 
 /* Line 1455 of yacc.c  */
-#line 288 "psdhd.y"
+#line 289 "psdhd.y"
     {
 																(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 																struct node *div_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "binary_token");
@@ -1967,7 +1968,7 @@ yyreduce:
   case 39:
 
 /* Line 1455 of yacc.c  */
-#line 299 "psdhd.y"
+#line 300 "psdhd.y"
     { 	
 																(yyval.node_object).node = createNode((yyvsp[(2) - (3)].node_object).node, NULL, "parenthesis_expression");
 															}
@@ -1976,56 +1977,56 @@ yyreduce:
   case 40:
 
 /* Line 1455 of yacc.c  */
-#line 302 "psdhd.y"
+#line 303 "psdhd.y"
     { (yyval.node_object).node = (yyvsp[(1) - (1)].node_object).node; }
     break;
 
   case 41:
 
 /* Line 1455 of yacc.c  */
-#line 303 "psdhd.y"
+#line 304 "psdhd.y"
     { (yyval.node_object).node = (yyvsp[(1) - (1)].node_object).node; }
     break;
 
   case 42:
 
 /* Line 1455 of yacc.c  */
-#line 308 "psdhd.y"
+#line 309 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
 
   case 43:
 
 /* Line 1455 of yacc.c  */
-#line 309 "psdhd.y"
+#line 310 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
 
   case 44:
 
 /* Line 1455 of yacc.c  */
-#line 310 "psdhd.y"
+#line 311 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
 
   case 45:
 
 /* Line 1455 of yacc.c  */
-#line 311 "psdhd.y"
+#line 312 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
 
   case 46:
 
 /* Line 1455 of yacc.c  */
-#line 312 "psdhd.y"
+#line 313 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
 
   case 47:
 
 /* Line 1455 of yacc.c  */
-#line 313 "psdhd.y"
+#line 314 "psdhd.y"
     { check_declaration((yyvsp[(1) - (1)].node_object).name);
 							  (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
@@ -2033,7 +2034,7 @@ yyreduce:
   case 48:
 
 /* Line 1455 of yacc.c  */
-#line 319 "psdhd.y"
+#line 320 "psdhd.y"
     {
 														(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 														struct node *and_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "binary_token");
@@ -2044,7 +2045,7 @@ yyreduce:
   case 49:
 
 /* Line 1455 of yacc.c  */
-#line 324 "psdhd.y"
+#line 325 "psdhd.y"
     {
 														(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 														struct node *or_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "binary_token");
@@ -2055,7 +2056,7 @@ yyreduce:
   case 50:
 
 /* Line 1455 of yacc.c  */
-#line 329 "psdhd.y"
+#line 330 "psdhd.y"
     {
 														(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 														struct node *not_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "binary_token");
@@ -2066,7 +2067,7 @@ yyreduce:
   case 51:
 
 /* Line 1455 of yacc.c  */
-#line 334 "psdhd.y"
+#line 335 "psdhd.y"
     {
 														(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 														struct node *eq_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "binary_token");
@@ -2077,7 +2078,7 @@ yyreduce:
   case 52:
 
 /* Line 1455 of yacc.c  */
-#line 339 "psdhd.y"
+#line 340 "psdhd.y"
     {
 														(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 														struct node *diff_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "binary_token");
@@ -2088,7 +2089,7 @@ yyreduce:
   case 53:
 
 /* Line 1455 of yacc.c  */
-#line 344 "psdhd.y"
+#line 345 "psdhd.y"
     {
 														(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 														struct node *sup_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "binary_token");
@@ -2099,7 +2100,7 @@ yyreduce:
   case 54:
 
 /* Line 1455 of yacc.c  */
-#line 349 "psdhd.y"
+#line 350 "psdhd.y"
     {
 														(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 														struct node *supeq_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "binary_token");
@@ -2110,7 +2111,7 @@ yyreduce:
   case 55:
 
 /* Line 1455 of yacc.c  */
-#line 354 "psdhd.y"
+#line 355 "psdhd.y"
     {
 														(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 														struct node *inf_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "binary_token");
@@ -2121,7 +2122,7 @@ yyreduce:
   case 56:
 
 /* Line 1455 of yacc.c  */
-#line 359 "psdhd.y"
+#line 360 "psdhd.y"
     {
 														(yyvsp[(2) - (3)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (3)].node_object).name);
 														struct node *infeq_expr = createNode((yyvsp[(2) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "binary_token");
@@ -2132,28 +2133,28 @@ yyreduce:
   case 57:
 
 /* Line 1455 of yacc.c  */
-#line 364 "psdhd.y"
+#line 365 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
 
   case 58:
 
 /* Line 1455 of yacc.c  */
-#line 365 "psdhd.y"
+#line 366 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (1)].node_object).name); }
     break;
 
   case 59:
 
 /* Line 1455 of yacc.c  */
-#line 370 "psdhd.y"
+#line 371 "psdhd.y"
     { scope++; }
     break;
 
   case 60:
 
 /* Line 1455 of yacc.c  */
-#line 371 "psdhd.y"
+#line 372 "psdhd.y"
     { 
 																																addSymbol("Function",(yyvsp[(8) - (14)].node_object).node->token,(yyvsp[(3) - (14)].node_object).name);
 																																(yyvsp[(3) - (14)].node_object).node = createNode(NULL, NULL, (yyvsp[(3) - (14)].node_object).name);
@@ -2169,21 +2170,21 @@ yyreduce:
   case 61:
 
 /* Line 1455 of yacc.c  */
-#line 384 "psdhd.y"
+#line 385 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, ""); }
     break;
 
   case 62:
 
 /* Line 1455 of yacc.c  */
-#line 385 "psdhd.y"
+#line 386 "psdhd.y"
     { (yyval.node_object).node = (yyvsp[(1) - (1)].node_object).node; }
     break;
 
   case 63:
 
 /* Line 1455 of yacc.c  */
-#line 389 "psdhd.y"
+#line 390 "psdhd.y"
     { 
 																addSymbol("Variable",(yyvsp[(1) - (4)].node_object).node->token,(yyvsp[(2) - (4)].node_object).name);
 																(yyvsp[(1) - (4)].node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (4)].node_object).name);
@@ -2196,7 +2197,7 @@ yyreduce:
   case 64:
 
 /* Line 1455 of yacc.c  */
-#line 396 "psdhd.y"
+#line 397 "psdhd.y"
     { 
 																addSymbol("Variable",(yyvsp[(1) - (2)].node_object).node->token,(yyvsp[(2) - (2)].node_object).name);
 																(yyvsp[(2) - (2)].node_object).node = createNode(NULL, NULL, (yyvsp[(2) - (2)].node_object).name);
@@ -2207,21 +2208,21 @@ yyreduce:
   case 65:
 
 /* Line 1455 of yacc.c  */
-#line 401 "psdhd.y"
+#line 402 "psdhd.y"
     { (yyval.node_object).node = createNode((yyvsp[(1) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "arguments"); }
     break;
 
   case 66:
 
 /* Line 1455 of yacc.c  */
-#line 405 "psdhd.y"
+#line 406 "psdhd.y"
     {(yyval.node_object).node = createNode((yyvsp[(1) - (1)].node_object).node, NULL, "function_call_statement");}
     break;
 
   case 67:
 
 /* Line 1455 of yacc.c  */
-#line 408 "psdhd.y"
+#line 409 "psdhd.y"
     { 
 												check_declaration((yyvsp[(1) - (4)].node_object).name);
 												(yyvsp[(1) - (4)].node_object).node = createNode(NULL, NULL, (yyvsp[(1) - (4)].node_object).name);
@@ -2232,35 +2233,35 @@ yyreduce:
   case 68:
 
 /* Line 1455 of yacc.c  */
-#line 416 "psdhd.y"
+#line 417 "psdhd.y"
     { (yyval.node_object).node = createNode(NULL, NULL, ""); }
     break;
 
   case 69:
 
 /* Line 1455 of yacc.c  */
-#line 417 "psdhd.y"
+#line 418 "psdhd.y"
     { (yyval.node_object).node = (yyvsp[(1) - (1)].node_object).node; }
     break;
 
   case 70:
 
 /* Line 1455 of yacc.c  */
-#line 421 "psdhd.y"
+#line 422 "psdhd.y"
     { (yyval.node_object).node = (yyvsp[(1) - (1)].node_object).node; }
     break;
 
   case 71:
 
 /* Line 1455 of yacc.c  */
-#line 422 "psdhd.y"
+#line 423 "psdhd.y"
     { (yyval.node_object).node = createNode((yyvsp[(1) - (3)].node_object).node, (yyvsp[(3) - (3)].node_object).node, "arguments"); }
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 2264 "y.tab.c"
+#line 2265 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2472,7 +2473,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 425 "psdhd.y"
+#line 426 "psdhd.y"
 
 /*** C Code section ***/
 
@@ -2634,7 +2635,7 @@ char *check_types(char *type1, char *type2) {
 		return "inttofloat";
 		
     if(!strcmp(type1, "int") && !strcmp(type2, "char"))
-		return "chattoint";
+		return "chartoint";
 		
     if(!strcmp(type1, "char") && !strcmp(type2, "int"))
 		return "inttochar";
@@ -2653,6 +2654,7 @@ char *get_type(char *var) {
             return sym[i].type;  
         }
     }
+	return NULL;
 }
 
 

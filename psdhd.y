@@ -145,7 +145,6 @@ statement:
 		
 declaration_statement:
 		variable_type IDENTIFIER '=' expression 	{ 
-														printf("\ndécl %s, scope: %d", $2.name,scope);
 														addSymbol("Variable", $1.node->token, $2.name);
 														
 														$2.node = createNode(NULL, NULL, $2.name);
@@ -179,12 +178,14 @@ assignement_statement:
 										$1.node = createNode(NULL, NULL, $1.name);
 										$$.node = createNode($1.node, $3.node, "assignement_statement"); 
 										
-										/*char *var_type = get_type($1.name);
-										char *type_conversion = check_types(var_type, $3.type);
-										if (type_conversion != NULL){
-											struct node *type_conversion_node = createNode(NULL, $3.node, "type_conversion");
-											$$.node = createNode($1.node, type_conversion_node, "assignement_statement");
-										}*/
+										char *var_type = get_type($1.name);
+										if (var_type != NULL){
+											char *type_conversion = check_types(var_type, $3.type);
+											if (type_conversion != NULL){
+												struct node *type_conversion_node = createNode(NULL, $3.node, "type_conversion");
+												$$.node = createNode($1.node, type_conversion_node, "assignement_statement");
+											}
+										}
 									}			
 		;
 		
@@ -583,7 +584,7 @@ char *check_types(char *type1, char *type2) {
 		return "inttofloat";
 		
     if(!strcmp(type1, "int") && !strcmp(type2, "char"))
-		return "chattoint";
+		return "chartoint";
 		
     if(!strcmp(type1, "char") && !strcmp(type2, "int"))
 		return "inttochar";
@@ -602,6 +603,7 @@ char *get_type(char *var) {
             return sym[i].type;  
         }
     }
+	return NULL;
 }
 
 
